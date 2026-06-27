@@ -26,8 +26,8 @@ export function render() {
       <p id="card-hint" style="font-size:13px; color:#52525b; margin-top:8px;">결과는 오직 나만 알 수 있어요</p>
     </div>
 
-    <div class="flip-container" style="width:100%; max-width:280px;" id="card-flip-area">
-      <div class="flip-inner" id="flip-inner" style="width:100%; height:380px;">
+    <div class="flip-container" style="width:100%; max-width:240px;" id="card-flip-area">
+      <div class="flip-inner" id="flip-inner" style="width:100%; height:300px;">
 
         <div class="flip-face" style="
           background:rgba(255,255,255,.04);
@@ -37,7 +37,7 @@ export function render() {
           cursor:pointer;">
           <div style="text-align:center; line-height:1;">
             <p style="font-family:'Space Grotesk'; font-size:11px; letter-spacing:.3em; color:#2a2a2e; text-transform:uppercase; margin-bottom:20px;">SHADOW RUN</p>
-            <p style="font-family:'Space Grotesk'; font-size:80px; font-weight:700; letter-spacing:-.04em; color:#1a1a1e; line-height:1; user-select:none;">?</p>
+            <p style="font-family:'Space Grotesk'; font-size:64px; font-weight:700; letter-spacing:-.04em; color:#1a1a1e; line-height:1; user-select:none;">?</p>
           </div>
           <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
             <div style="width:28px; height:1px; background:rgba(255,255,255,.12);"></div>
@@ -49,7 +49,7 @@ export function render() {
         <div class="flip-face flip-back" id="card-back"
           style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; border:1px solid transparent;">
           <p class="eyebrow" id="card-team-label" style="letter-spacing:.22em;"></p>
-          <p id="card-team-name" style="font-family:'Space Grotesk'; font-size:52px; font-weight:700; letter-spacing:-.03em; line-height:1;"></p>
+          <p id="card-team-name" style="font-family:'Space Grotesk'; font-size:40px; font-weight:700; letter-spacing:-.03em; line-height:1;"></p>
           <div style="width:36px; height:1.5px; border-radius:99px;" id="card-divider"></div>
           <p id="card-team-desc" style="font-size:13px; text-align:center; padding:0 24px; line-height:1.6; opacity:.65;"></p>
         </div>
@@ -116,7 +116,12 @@ function flipCard() {
   state.cardFlipped = true;
 
   const isPacer = state.team === 'pacer';
-  document.getElementById('flip-inner').classList.add('flipped');
+  const inner = document.getElementById('flip-inner');
+  inner.classList.add('spinning');
+  inner.addEventListener('animationend', () => {
+    inner.classList.remove('spinning');
+    inner.classList.add('flipped');
+  }, { once: true });
 
   const orbA = document.getElementById('card-orb-a');
   const orbB = document.getElementById('card-orb-b');
@@ -132,10 +137,12 @@ function flipCard() {
 
   applyTeamTheme(state.team);
 
-  setTimeout(() => {
-    const btn = document.getElementById('card-confirm-btn');
-    btn.style.opacity       = '1';
-    btn.style.pointerEvents = 'all';
-    btn.style.transform     = 'translateY(0)';
-  }, 950);
+  inner.addEventListener('animationend', () => {
+    setTimeout(() => {
+      const btn = document.getElementById('card-confirm-btn');
+      btn.style.opacity       = '1';
+      btn.style.pointerEvents = 'all';
+      btn.style.transform     = 'translateY(0)';
+    }, 200);
+  }, { once: true });
 }

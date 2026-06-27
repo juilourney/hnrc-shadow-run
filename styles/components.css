@@ -164,9 +164,11 @@
 .flip-container { perspective: 1200px; }
 .flip-inner {
   position: relative; transform-style: preserve-3d;
-  transition: transform 1.1s var(--spring);
 }
-.flip-inner.flipped { transform: rotateY(180deg); }
+.flip-inner.spinning {
+  animation: card-spin-reveal 2s cubic-bezier(0.25, 0.1, 0.1, 1) forwards;
+}
+.flip-inner.flipped { transform: rotateY(1260deg); }
 .flip-face {
   position: absolute; inset: 0; backface-visibility: hidden;
   border-radius: 28px; display: flex; flex-direction: column;

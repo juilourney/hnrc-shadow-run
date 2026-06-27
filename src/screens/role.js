@@ -34,8 +34,8 @@ export function render() {
       <p style="font-size:13px; color:#52525b; margin-top:8px;">배정된 역할은 게임이 끝날 때까지 비밀</p>
     </div>
 
-    <div class="flip-container" style="width:100%; max-width:280px;" id="role-flip-area">
-      <div class="flip-inner" id="role-flip-inner" style="width:100%; height:380px;">
+    <div class="flip-container" style="width:100%; max-width:240px;" id="role-flip-area">
+      <div class="flip-inner" id="role-flip-inner" style="width:100%; height:300px;">
 
         <div class="flip-face" style="
           background: var(--accent-tint);
@@ -46,7 +46,7 @@ export function render() {
           <div style="text-align:center; line-height:1;">
             <p style="font-family:'Space Grotesk'; font-size:11px; letter-spacing:.3em;
               color:var(--accent); opacity:.3; text-transform:uppercase; margin-bottom:20px;">SHADOW RUN</p>
-            <p style="font-family:'Space Grotesk'; font-size:80px; font-weight:700;
+            <p style="font-family:'Space Grotesk'; font-size:64px; font-weight:700;
               letter-spacing:-.04em; color:var(--accent); opacity:.2; line-height:1; user-select:none;">?</p>
           </div>
           <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
@@ -61,7 +61,7 @@ export function render() {
           style="display:flex; flex-direction:column; align-items:center; justify-content:center;
             gap:12px; border:1px solid transparent;">
           <p class="eyebrow" id="role-card-label" style="letter-spacing:.22em; opacity:.7;"></p>
-          <p id="role-card-name" style="font-family:'Space Grotesk'; font-size:52px; font-weight:700; letter-spacing:-.03em; line-height:1;"></p>
+          <p id="role-card-name" style="font-family:'Space Grotesk'; font-size:40px; font-weight:700; letter-spacing:-.03em; line-height:1;"></p>
           <div style="width:36px; height:1.5px; border-radius:99px;" id="role-card-divider"></div>
           <p id="role-card-sub" style="font-size:13px; text-align:center; padding:0 24px; line-height:1.6; opacity:.65;"></p>
         </div>
@@ -163,16 +163,23 @@ function flipRoleCard() {
   if (state.roleFlipped) return;
   state.roleFlipped = true;
 
-  document.getElementById('role-flip-inner').classList.add('flipped');
+  const inner = document.getElementById('role-flip-inner');
+  inner.classList.add('spinning');
+  inner.addEventListener('animationend', () => {
+    inner.classList.remove('spinning');
+    inner.classList.add('flipped');
+  }, { once: true });
 
-  setTimeout(() => {
-    const descEl = document.getElementById('role-desc-reveal');
-    const btnEl  = document.getElementById('role-confirm-btn');
-    descEl.style.maxHeight     = descEl.scrollHeight + 'px';
-    descEl.style.opacity       = '1';
-    descEl.style.pointerEvents = 'all';
-    btnEl.style.opacity        = '1';
-    btnEl.style.transform      = 'translateY(0)';
-    btnEl.style.pointerEvents  = 'all';
-  }, 950);
+  inner.addEventListener('animationend', () => {
+    setTimeout(() => {
+      const descEl = document.getElementById('role-desc-reveal');
+      const btnEl  = document.getElementById('role-confirm-btn');
+      descEl.style.maxHeight     = descEl.scrollHeight + 'px';
+      descEl.style.opacity       = '1';
+      descEl.style.pointerEvents = 'all';
+      btnEl.style.opacity        = '1';
+      btnEl.style.transform      = 'translateY(0)';
+      btnEl.style.pointerEvents  = 'all';
+    }, 200);
+  }, { once: true });
 }

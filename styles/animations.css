@@ -30,6 +30,15 @@
   50%       { box-shadow: 0 0 0 8px rgba(251,113,133,.08); }
 }
 
+@keyframes card-spin-reveal {
+  0%   { transform: rotateY(0deg); }
+  35%  { transform: rotateY(540deg); }
+  60%  { transform: rotateY(900deg); }
+  80%  { transform: rotateY(1080deg); }
+  92%  { transform: rotateY(1170deg); }
+  100% { transform: rotateY(1260deg); }
+}
+
 .anim-up   { animation: fadeUp .6s var(--spring) both; }
 .anim-up-1 { animation: fadeUp .6s .08s var(--spring) both; }
 .anim-up-2 { animation: fadeUp .6s .16s var(--spring) both; }
