@@ -98,42 +98,20 @@ export function init() {
 }
 
 export function prepareRoleScreen() {
-  const r        = ROLES[state.role];
   const teamName = state.team === 'pacer' ? '페이서팀' : '고스트팀';
-  const isRunner = state.role === 'runner';
-
   document.getElementById('role-team-badge').textContent = teamName;
 
-  const back    = document.getElementById('role-card-back');
-  const label   = document.getElementById('role-card-label');
-  const nameEl  = document.getElementById('role-card-name');
-  const divider = document.getElementById('role-card-divider');
-  const sub     = document.getElementById('role-card-sub');
-
-  if (isRunner) {
-    back.style.background    = 'rgba(255,255,255,.04)';
-    back.style.border        = '1px solid rgba(255,255,255,.09)';
-    back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.07)';
-    label.style.color        = 'rgba(255,255,255,.4)';
-    nameEl.style.color       = '#fafafa';
-    divider.style.background = 'rgba(255,255,255,.2)';
-    sub.style.color          = 'rgba(255,255,255,.4)';
-  } else {
-    back.style.background    = 'var(--accent-tint)';
-    back.style.border        = '1px solid var(--accent-border)';
-    back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.08), 0 0 40px -10px var(--accent-glow)';
-    label.style.color        = 'var(--accent)';
-    nameEl.style.color       = 'var(--accent)';
-    divider.style.background = 'var(--accent)';
-    sub.style.color          = 'var(--accent)';
-  }
-
-  label.textContent  = 'YOUR ROLE';
-  nameEl.textContent = r.name;
-  sub.textContent    = r.short;
-
-  document.getElementById('role-desc-headline').textContent = r.headline;
-  document.getElementById('role-desc-detail').textContent   = r.detail;
+  // 뒷면 내용 초기화 — 스핀 중 노출 방지
+  const back   = document.getElementById('role-card-back');
+  const label  = document.getElementById('role-card-label');
+  const nameEl = document.getElementById('role-card-name');
+  const sub    = document.getElementById('role-card-sub');
+  back.style.background = 'rgba(255,255,255,.04)';
+  back.style.border     = '1px solid rgba(255,255,255,.09)';
+  back.style.boxShadow  = 'none';
+  label.textContent     = '';
+  nameEl.textContent    = '';
+  sub.textContent       = '';
 
   const fi = document.getElementById('role-flip-inner');
   fi.classList.remove('flipped', 'spinning');
@@ -149,10 +127,10 @@ export function prepareRoleScreen() {
   btnEl.style.pointerEvents  = 'none';
 
   const n = state.name;
-document.getElementById('settings-name').textContent      = n || '참가자';
+  document.getElementById('settings-name').textContent      = n || '참가자';
   document.getElementById('settings-initial').textContent   = n ? n[0] : '?';
   document.getElementById('settings-team-chip').textContent = teamName;
-  document.getElementById('settings-role-chip').textContent = '· ' + r.name;
+  document.getElementById('settings-role-chip').textContent = '· ' + ROLES[state.role].name;
 }
 
 function flipRoleCard() {
@@ -164,6 +142,40 @@ function flipRoleCard() {
 
   inner.addEventListener('animationend', () => {
     inner.classList.add('flipped');
+
+    // 스핀 멈춘 후 뒷면 내용 채우기
+    const r        = ROLES[state.role];
+    const isRunner = state.role === 'runner';
+    const back     = document.getElementById('role-card-back');
+    const label    = document.getElementById('role-card-label');
+    const nameEl   = document.getElementById('role-card-name');
+    const divider  = document.getElementById('role-card-divider');
+    const sub      = document.getElementById('role-card-sub');
+
+    if (isRunner) {
+      back.style.background    = 'rgba(255,255,255,.04)';
+      back.style.border        = '1px solid rgba(255,255,255,.09)';
+      back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.07)';
+      label.style.color        = 'rgba(255,255,255,.4)';
+      nameEl.style.color       = '#fafafa';
+      divider.style.background = 'rgba(255,255,255,.2)';
+      sub.style.color          = 'rgba(255,255,255,.4)';
+    } else {
+      back.style.background    = 'var(--accent-tint)';
+      back.style.border        = '1px solid var(--accent-border)';
+      back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.08), 0 0 40px -10px var(--accent-glow)';
+      label.style.color        = 'var(--accent)';
+      nameEl.style.color       = 'var(--accent)';
+      divider.style.background = 'var(--accent)';
+      sub.style.color          = 'var(--accent)';
+    }
+    label.textContent  = 'YOUR ROLE';
+    nameEl.textContent = r.name;
+    sub.textContent    = r.short;
+
+    document.getElementById('role-desc-headline').textContent = r.headline;
+    document.getElementById('role-desc-detail').textContent   = r.detail;
+
     setTimeout(() => {
       const descEl = document.getElementById('role-desc-reveal');
       const btnEl  = document.getElementById('role-confirm-btn');
@@ -173,6 +185,6 @@ function flipRoleCard() {
       btnEl.style.opacity        = '1';
       btnEl.style.transform      = 'translateY(0)';
       btnEl.style.pointerEvents  = 'all';
-    }, 200);
+    }, 300);
   }, { once: true });
 }

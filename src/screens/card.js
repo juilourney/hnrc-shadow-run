@@ -75,36 +75,29 @@ export function init() {
 }
 
 export function prepareCard() {
-  const isPacer = state.team === 'pacer';
-  const back    = document.getElementById('card-back');
-  const label   = document.getElementById('card-team-label');
-  const nameEl  = document.getElementById('card-team-name');
-  const divider = document.getElementById('card-divider');
-  const desc    = document.getElementById('card-team-desc');
+  // 뒷면 내용 초기화 — 스핀 중 노출 방지 (내용은 animationend 후에 채움)
+  const back   = document.getElementById('card-back');
+  const label  = document.getElementById('card-team-label');
+  const nameEl = document.getElementById('card-team-name');
+  const desc   = document.getElementById('card-team-desc');
+  back.style.background = 'rgba(255,255,255,.04)';
+  back.style.border     = '1px solid rgba(255,255,255,.09)';
+  back.style.boxShadow  = 'none';
+  label.textContent     = '';
+  nameEl.textContent    = '';
+  desc.textContent      = '';
 
-  if (isPacer) {
-    back.style.background    = 'linear-gradient(160deg, rgba(56,189,248,.20) 0%, rgba(14,165,233,.06) 100%)';
-    back.style.border        = '1px solid rgba(56,189,248,.35)';
-    back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.08)';
-    label.style.color        = 'rgba(125,211,252,.7)';
-    label.textContent        = 'YOUR TEAM';
-    nameEl.style.color       = '#38bdf8';
-    nameEl.textContent       = '페이서';
-    divider.style.background = '#38bdf8';
-    desc.style.color         = 'rgba(125,211,252,.65)';
-    desc.textContent         = '번개를 달려 게이지를\n오른쪽으로 당겨라';
-  } else {
-    back.style.background    = 'linear-gradient(160deg, rgba(192,132,252,.18) 0%, rgba(168,85,247,.05) 100%)';
-    back.style.border        = '1px solid rgba(192,132,252,.32)';
-    back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.07)';
-    label.style.color        = 'rgba(216,180,254,.7)';
-    label.textContent        = 'YOUR TEAM';
-    nameEl.style.color       = '#c084fc';
-    nameEl.textContent       = '고스트';
-    divider.style.background = '#c084fc';
-    desc.style.color         = 'rgba(216,180,254,.65)';
-    desc.textContent         = '보이지 않게 달려 게이지를\n왼쪽으로 당겨라';
-  }
+  // 플립 상태 리셋
+  const inner = document.getElementById('flip-inner');
+  inner.classList.remove('flipped', 'spinning');
+  state.cardFlipped = false;
+
+  const btn = document.getElementById('card-confirm-btn');
+  btn.style.opacity      = '0';
+  btn.style.transform    = 'translateY(10px)';
+  btn.style.pointerEvents = 'none';
+
+  document.getElementById('card-bg-orb').style.opacity = '0';
 }
 
 function flipCard() {
@@ -130,13 +123,43 @@ function flipCard() {
   applyTeamTheme(state.team);
 
   inner.addEventListener('animationend', () => {
-    // spinning 유지 (forwards fill-mode로 최종 위치 고정), flipped는 리셋용 마커
     inner.classList.add('flipped');
+
+    // 스핀 멈춘 후 뒷면 내용 채우기
+    const back    = document.getElementById('card-back');
+    const label   = document.getElementById('card-team-label');
+    const nameEl  = document.getElementById('card-team-name');
+    const divider = document.getElementById('card-divider');
+    const desc    = document.getElementById('card-team-desc');
+
+    if (isPacer) {
+      back.style.background    = 'linear-gradient(160deg, rgba(56,189,248,.20) 0%, rgba(14,165,233,.06) 100%)';
+      back.style.border        = '1px solid rgba(56,189,248,.35)';
+      back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.08)';
+      label.style.color        = 'rgba(125,211,252,.7)';
+      nameEl.style.color       = '#38bdf8';
+      divider.style.background = '#38bdf8';
+      desc.style.color         = 'rgba(125,211,252,.65)';
+      nameEl.textContent       = '페이서';
+      desc.textContent         = '번개를 달려 게이지를\n오른쪽으로 당겨라';
+    } else {
+      back.style.background    = 'linear-gradient(160deg, rgba(192,132,252,.18) 0%, rgba(168,85,247,.05) 100%)';
+      back.style.border        = '1px solid rgba(192,132,252,.32)';
+      back.style.boxShadow     = 'inset 0 1px 0 rgba(255,255,255,.07)';
+      label.style.color        = 'rgba(216,180,254,.7)';
+      nameEl.style.color       = '#c084fc';
+      divider.style.background = '#c084fc';
+      desc.style.color         = 'rgba(216,180,254,.65)';
+      nameEl.textContent       = '고스트';
+      desc.textContent         = '보이지 않게 달려 게이지를\n왼쪽으로 당겨라';
+    }
+    label.textContent = 'YOUR TEAM';
+
     setTimeout(() => {
       const btn = document.getElementById('card-confirm-btn');
       btn.style.opacity       = '1';
       btn.style.pointerEvents = 'all';
       btn.style.transform     = 'translateY(0)';
-    }, 200);
+    }, 300);
   }, { once: true });
 }
