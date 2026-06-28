@@ -13,8 +13,8 @@ function section(emoji, title, content) {
 function row(label, value, color = '#a1a1aa') {
   return `
   <div style="display:flex; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05);">
-    <p style="font-size:13px; font-weight:600; color:#e4e4e7; min-width:56px; flex-shrink:0;">${label}</p>
-    <p style="font-size:13px; color:${color}; line-height:1.6;">${value}</p>
+    <p style="font-size:13px; font-weight:600; color:#e4e4e7; width:80px; flex-shrink:0; line-height:1.5;">${label}</p>
+    <p style="font-size:13px; color:${color}; line-height:1.6; flex:1;">${value}</p>
   </div>`;
 }
 
