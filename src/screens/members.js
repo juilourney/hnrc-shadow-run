@@ -121,22 +121,10 @@ export function render() {
     </div>
   </div>
 
-  <div class="tabbar" style="padding:6px 2px;">
-    <div class="tab" id="tab-home-m"><div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span></div>
-    <div class="tab" id="tab-bolt-m"><div class="tab-icon"><span class="ti-bolt"></span></div><span>번개</span></div>
-    <div class="tab" id="tab-vote-m"><div class="tab-icon"><span class="ti-vote"></span></div><span>투표</span></div>
-    <div class="tab on"><div class="tab-icon"><span class="ti-users"></span></div><span>참가자</span></div>
-    <div class="tab" id="tab-guide-m"><div class="tab-icon"><span class="ti-book"></span></div><span>가이드</span></div>
-  </div>
 </div>`;
 }
 
 export function init() {
-  document.getElementById('tab-home-m').addEventListener('click', () => goToScreen('s-dash'));
-  document.getElementById('tab-bolt-m').addEventListener('click', () => goToScreen('s-bolt'));
-  document.getElementById('tab-vote-m').addEventListener('click', () => goToScreen('s-vote'));
-  document.getElementById('tab-guide-m').addEventListener('click', () => goToScreen('s-guide'));
-
   // 정렬 토글
   document.getElementById('sort-toggle').addEventListener('click', () => {
     sortMode = sortMode === 'name' ? 'km' : 'name';

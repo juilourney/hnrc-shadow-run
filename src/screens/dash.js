@@ -265,14 +265,6 @@ export function render() {
     </div>
   </div>
 
-  <!-- 탭바 -->
-  <div class="tabbar" style="padding:6px 2px;">
-    <div class="tab on" id="tab-home"><div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span></div>
-    <div class="tab" id="tab-bolt-d"><div class="tab-icon"><span class="ti-bolt"></span></div><span>번개</span></div>
-    <div class="tab" id="tab-vote-d"><div class="tab-icon"><span class="ti-vote"></span></div><span>투표</span></div>
-    <div class="tab" id="tab-members-d"><div class="tab-icon"><span class="ti-users"></span></div><span>참가자</span></div>
-    <div class="tab" id="tab-guide-d"><div class="tab-icon"><span class="ti-book"></span></div><span>가이드</span></div>
-  </div>
 </div>`;
 }
 
@@ -281,11 +273,6 @@ export function init() {
   document.getElementById('timeline-open-btn2').addEventListener('click', openTimeline);
   document.getElementById('timeline-close-btn').addEventListener('click', closeTimeline);
   document.getElementById('timeline-backdrop').addEventListener('click', closeTimeline);
-  document.getElementById('tab-home').addEventListener('click', () => goToScreen('s-dash'));
-  document.getElementById('tab-bolt-d').addEventListener('click', () => goToScreen('s-bolt'));
-  document.getElementById('tab-vote-d').addEventListener('click', () => goToScreen('s-vote'));
-  document.getElementById('tab-members-d').addEventListener('click', () => goToScreen('s-members'));
-  document.getElementById('tab-guide-d').addEventListener('click', () => goToScreen('s-guide'));
 }
 
 function openTimeline() {

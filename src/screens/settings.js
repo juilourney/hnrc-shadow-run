@@ -1,4 +1,3 @@
-import { goToScreen } from '../utils/nav.js';
 
 export function render() {
   return `
@@ -45,19 +44,7 @@ export function render() {
     </div>
   </div>
 
-  <div class="tabbar" style="padding:6px 2px;">
-    <div class="tab" id="tab-home-s"><div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span></div>
-    <div class="tab" id="tab-bolt-s"><div class="tab-icon"><span class="ti-bolt"></span></div><span>번개</span></div>
-    <div class="tab" id="tab-vote-s"><div class="tab-icon"><span class="ti-vote"></span></div><span>투표</span></div>
-    <div class="tab" id="tab-members-s"><div class="tab-icon"><span class="ti-users"></span></div><span>참가자</span></div>
-    <div class="tab on" id="tab-guide-s"><div class="tab-icon"><span class="ti-book"></span></div><span>가이드</span></div>
-  </div>
 </div>`;
 }
 
-export function init() {
-  document.getElementById('tab-home-s').addEventListener('click', () => goToScreen('s-dash'));
-  document.getElementById('tab-bolt-s').addEventListener('click', () => goToScreen('s-bolt'));
-  document.getElementById('tab-vote-s').addEventListener('click', () => goToScreen('s-vote'));
-  document.getElementById('tab-members-s').addEventListener('click', () => goToScreen('s-members'));
-}
+export function init() {}

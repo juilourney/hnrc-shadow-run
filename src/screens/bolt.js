@@ -188,13 +188,6 @@ export function render() {
     </div>
   </div>
 
-  <div class="tabbar" style="padding:6px 2px;">
-    <div class="tab" id="tab-home-b"><div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span></div>
-    <div class="tab on"><div class="tab-icon"><span class="ti-bolt"></span></div><span>번개</span></div>
-    <div class="tab" id="tab-vote-b"><div class="tab-icon"><span class="ti-vote"></span></div><span>투표</span></div>
-    <div class="tab" id="tab-members-b"><div class="tab-icon"><span class="ti-users"></span></div><span>참가자</span></div>
-    <div class="tab" id="tab-guide-b"><div class="tab-icon"><span class="ti-book"></span></div><span>가이드</span></div>
-  </div>
 </div>`;
 }
 
@@ -207,11 +200,6 @@ export function init() {
     if (!title) { document.getElementById('create-title').focus(); return; }
     closeCreateOverlay();
   });
-
-  document.getElementById('tab-home-b').addEventListener('click', () => goToScreen('s-dash'));
-  document.getElementById('tab-vote-b').addEventListener('click', () => goToScreen('s-vote'));
-  document.getElementById('tab-members-b').addEventListener('click', () => goToScreen('s-members'));
-  document.getElementById('tab-guide-b').addEventListener('click', () => goToScreen('s-guide'));
 
   // 번개 카드 탭
   ['b1', 'b2'].forEach(id => {

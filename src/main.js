@@ -1,3 +1,4 @@
+import { goToScreen, syncTabbar } from './utils/nav.js';
 import { render as renderName, init as initName }               from './screens/name.js';
 import { render as renderCard, init as initCard }               from './screens/card.js';
 import { render as renderRole, init as initRole }               from './screens/role.js';
@@ -40,3 +41,21 @@ initVote();
 initMembers();
 initGuide();
 initSettings();
+
+// 전역 탭바 — 단일 요소, 화면 전환 시 고정
+const tabbarEl = document.createElement('div');
+tabbarEl.id = 'global-tabbar';
+tabbarEl.className = 'tabbar';
+tabbarEl.style.cssText = 'position:absolute; bottom:0; left:12px; right:12px; margin-bottom:max(var(--safe-bottom),12px); display:none;';
+tabbarEl.innerHTML = `
+  <div class="tab" data-tab="home"><div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span></div>
+  <div class="tab" data-tab="bolt"><div class="tab-icon"><span class="ti-bolt"></span></div><span>번개</span></div>
+  <div class="tab" data-tab="vote"><div class="tab-icon"><span class="ti-vote"></span></div><span>투표</span></div>
+  <div class="tab" data-tab="members"><div class="tab-icon"><span class="ti-users"></span></div><span>참가자</span></div>
+  <div class="tab" data-tab="guide"><div class="tab-icon"><span class="ti-book"></span></div><span>가이드</span></div>
+`;
+const TAB_SCREEN_MAP = { home: 's-dash', bolt: 's-bolt', vote: 's-vote', members: 's-members', guide: 's-guide' };
+tabbarEl.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => goToScreen(TAB_SCREEN_MAP[tab.dataset.tab]));
+});
+document.getElementById('app').appendChild(tabbarEl);
