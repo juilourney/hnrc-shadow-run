@@ -64,3 +64,30 @@ tabbarEl.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => goToScreen(TAB_SCREEN_MAP[tab.dataset.tab]));
 });
 document.getElementById('app').appendChild(tabbarEl);
+
+// ── 임시 진단 배너 (원인 파악용, 확인 후 제거) ──
+(function debugBanner() {
+  function read() {
+    const app = document.getElementById('app');
+    const ar = app.getBoundingClientRect();
+    const cs = getComputedStyle(document.documentElement);
+    return [
+      'innerH=' + window.innerHeight,
+      'screenH=' + window.screen.height,
+      'visualVP=' + (window.visualViewport ? Math.round(window.visualViewport.height) : 'n/a'),
+      'appH=' + Math.round(ar.height) + ' appBottom=' + Math.round(ar.bottom),
+      'standalone=' + (window.navigator.standalone === true),
+      'safeBottom=' + cs.getPropertyValue('--safe-bottom').trim(),
+      'dvh100=' + (CSS.supports && CSS.supports('height','100dvh')),
+    ].join('  ·  ');
+  }
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed; left:0; right:0; bottom:0; z-index:99999;' +
+    'background:#ff2d55; color:#fff; font:600 10px/1.5 monospace; padding:6px 8px;' +
+    'white-space:pre-wrap; text-align:center; pointer-events:none;';
+  document.body.appendChild(d);
+  const tick = () => { d.textContent = read(); };
+  tick();
+  window.addEventListener('resize', tick);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', tick);
+})();
