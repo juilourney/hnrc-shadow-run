@@ -271,38 +271,42 @@ export function init() {
   });
 }
 
+// 플레이어별 지목 횟수 추적
+const voteCount = {};
+
 function castVote(playerId, playerName) {
   let votesLeft = parseInt(document.getElementById('votes-remaining').textContent);
   votesLeft--;
   document.getElementById('votes-remaining').textContent = votesLeft;
 
-  // 지목된 행 하이라이트
+  voteCount[playerId] = (voteCount[playerId] || 0) + 1;
+
+  // 지목된 행 하이라이트 + 지목 횟수 배지
   const row = document.getElementById(`player-row-${playerId}`);
   if (row) {
     row.style.background = 'rgba(251,113,133,.08)';
     row.style.border = '1px solid rgba(251,113,133,.25)';
     const btn = row.querySelector('.vote-btn');
-    if (btn) {
-      btn.textContent = '지목됨';
-      btn.style.background = 'rgba(251,113,133,.06)';
-      btn.style.borderColor = 'rgba(251,113,133,.15)';
-      btn.style.color = '#52525b';
-      btn.style.pointerEvents = 'none';
+    if (btn && votesLeft > 0) {
+      // 투표권이 남아있으면 재지목 가능 — 버튼은 활성 유지
+      btn.textContent = voteCount[playerId] > 1 ? `지목됨 ×${voteCount[playerId]}` : '지목됨';
     }
   }
 
   if (MY_ROLE === 'double' && votesLeft === 1) {
-    showTooltip('남은 투표권이 1표 있습니다. 한 명 더 지목할 수 있습니다.');
+    showTooltip('남은 투표권 1표 — 같은 사람을 다시 지목할 수 있습니다.');
   }
 
   if (votesLeft <= 0) {
     // 모든 버튼 비활성화
     document.querySelectorAll('.vote-btn').forEach(b => {
+      const pid = b.dataset.id;
       b.style.background = 'rgba(255,255,255,.03)';
       b.style.borderColor = 'rgba(255,255,255,.06)';
       b.style.color = '#3f3f46';
       b.style.pointerEvents = 'none';
-      if (b.textContent !== '지목됨') b.textContent = '마감';
+      const cnt = voteCount[pid] || 0;
+      b.textContent = cnt > 1 ? `지목됨 ×${cnt}` : cnt === 1 ? '지목됨' : '마감';
     });
     document.getElementById('vote-done-msg').style.display = 'block';
     document.getElementById('sim-result-btn').style.display = 'block';
