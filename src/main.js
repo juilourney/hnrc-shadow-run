@@ -12,6 +12,7 @@ import { render as renderVote, init as initVote }               from './screens/
 import { render as renderMembers, init as initMembers }         from './screens/members.js';
 import { render as renderGuide, init as initGuide }             from './screens/guide.js';
 import { render as renderSettings, init as initSettings }       from './screens/settings.js';
+import { render as renderWaiting, init as initWaiting }         from './screens/waiting.js';
 
 document.getElementById('app').innerHTML =
   renderName() +
@@ -26,7 +27,8 @@ document.getElementById('app').innerHTML =
   renderVote() +
   renderMembers() +
   renderGuide() +
-  renderSettings();
+  renderSettings() +
+  renderWaiting();
 
 initName();
 initCard();
@@ -41,6 +43,7 @@ initVote();
 initMembers();
 initGuide();
 initSettings();
+initWaiting();
 
 // 전역 탭바 — 단일 요소, 화면 전환 시 고정
 const tabbarEl = document.createElement('div');

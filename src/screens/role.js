@@ -1,6 +1,7 @@
 import { state, ROLES } from '../state.js';
 import { goToScreen } from '../utils/nav.js';
 import { initPhase } from '../utils/phase.js';
+import { prepareWaiting } from './waiting.js';
 
 export function render() {
   return `
@@ -93,7 +94,8 @@ export function init() {
   document.getElementById('role-flip-area').addEventListener('click', flipRoleCard);
   document.getElementById('role-confirm-btn').addEventListener('click', () => {
     initPhase();
-    goToScreen('s-dash');
+    prepareWaiting();
+    goToScreen('s-waiting');
   });
 }
 
