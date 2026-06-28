@@ -81,10 +81,10 @@ body {
           mask-image: linear-gradient(to bottom, #000 45%, transparent);
 }
 .edge-blur-bottom {
-  bottom: 0; height: calc(var(--safe-bottom) + 20px);
-  background: linear-gradient(to top, rgba(5,5,5,.55), rgba(5,5,5,0));
-  -webkit-mask-image: linear-gradient(to top, #000 45%, transparent);
-          mask-image: linear-gradient(to top, #000 45%, transparent);
+  bottom: 0; height: calc(var(--safe-bottom) + 80px);
+  background: linear-gradient(to top, rgba(5,5,5,.85) 0%, rgba(5,5,5,.45) 40%, rgba(5,5,5,0) 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 30%, transparent);
+          mask-image: linear-gradient(to top, #000 30%, transparent);
 }
 
 /* ── noise grain ── */
