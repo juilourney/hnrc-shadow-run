@@ -2,9 +2,9 @@
    GLOBAL TAB BAR
 ═══════════════════════════════════════ */
 
-/* tab bar — 화면 바닥 고정 오버레이 */
+/* tab bar — safe area 경계 바로 위에 고정 (내부에 safe area 패딩 없음) */
 .tabbar {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%);
   width: calc(100% - 24px); max-width: 406px; z-index: 20;
   border-radius: 26px 26px 0 0;
   background: rgba(18,18,20,.75);
@@ -12,11 +12,9 @@
   border: 1px solid rgba(255,255,255,.08);
   border-bottom: none;
   box-shadow: 0 20px 50px -20px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06);
-  display: flex; align-items: flex-end; justify-content: space-around;
-  /* Apple HIG: Home Indicator(safe-area) 위로 콘텐츠를 띄우되, 과한 여백은 줄인다.
-     iPhone(safe ≈ 34px) → 약 18px, 노치 없는 기기 → 최소 8px. safe-area는 유지. */
-  padding: 6px 4px max(calc(var(--safe-bottom) - 16px), 8px);
-  height: auto; min-height: 48px;
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 6px 4px;
+  height: 54px;
 }
 .tab {
   display: flex; flex-direction: column; align-items: center; gap: 3px;
