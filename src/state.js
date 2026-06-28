@@ -15,4 +15,29 @@ export const state = {
   role: null,        // key of ROLES
   cardFlipped: false,
   roleFlipped: false,
+  roleConfirmed: false,
 };
+
+const STORAGE_KEY = 'sr_player';
+
+export function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    name:          state.name,
+    team:          state.team,
+    role:          state.role,
+    cardFlipped:   state.cardFlipped,
+    roleFlipped:   state.roleFlipped,
+    roleConfirmed: state.roleConfirmed,
+  }));
+}
+
+export function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    if (!saved.name || !saved.team || !saved.role) return false;
+    Object.assign(state, saved);
+    return true;
+  } catch { return false; }
+}

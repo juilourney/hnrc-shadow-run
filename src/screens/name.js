@@ -1,4 +1,4 @@
-import { state, SPECIAL_ROLES } from '../state.js';
+import { state, SPECIAL_ROLES, saveState } from '../state.js';
 import { goToScreen } from '../utils/nav.js';
 import { prepareCard } from './card.js';
 
@@ -101,6 +101,8 @@ function enterGame() {
   state.role = SPECIAL_ROLES[Math.floor(Math.random() * SPECIAL_ROLES.length)];
   state.cardFlipped = false;
   state.roleFlipped = false;
+  state.roleConfirmed = false;
+  saveState();
   prepareCard();
   goToScreen('s-card');
 }
