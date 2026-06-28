@@ -63,10 +63,16 @@ tabbarEl.querySelectorAll('.tab').forEach(tab => {
 });
 document.getElementById('app').appendChild(tabbarEl);
 
-// ── 상·하단 엣지 블러 (콘텐츠가 시스템 바 밑으로 연장되는 느낌) ──
-const topBlur = document.createElement('div');
-topBlur.className = 'edge-blur edge-blur-top';
-const bottomBlur = document.createElement('div');
-bottomBlur.className = 'edge-blur edge-blur-bottom';
-document.getElementById('app').appendChild(topBlur);
-document.getElementById('app').appendChild(bottomBlur);
+// ── 하단 검은 여백을 대체하는 Safe Area 전용 블러 독 (인스타 스타일) ──
+const safeAreaDock = document.createElement('div');
+safeAreaDock.style.cssText = `
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+  height: var(--safe-bottom);
+  background: rgba(18,18,20,.65);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,.05);
+  pointer-events: none;
+`;
+document.getElementById('app').appendChild(safeAreaDock);
+
+

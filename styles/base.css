@@ -69,25 +69,6 @@ body {
     radial-gradient(60% 45% at 15% 5%, rgba(113,113,122,.10), transparent 55%);
 }
 
-/* ── 상·하단 엣지 블러 (시스템 바 밑으로 콘텐츠 연장 효과) ── */
-.edge-blur {
-  position: fixed; left: 0; right: 0; z-index: 15;
-  pointer-events: none;
-}
-.edge-blur-top {
-  top: 0; height: calc(var(--safe-top) + 40px);
-  background: transparent;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black calc(var(--safe-top) + 4px), transparent 100%);
-          mask-image: linear-gradient(to bottom, black 0%, black calc(var(--safe-top) + 4px), transparent 100%);
-}
-.edge-blur-bottom {
-  bottom: 0; height: calc(var(--safe-bottom) + 80px);
-  background: transparent;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  -webkit-mask-image: linear-gradient(to top, black 0%, black calc(var(--safe-bottom) + 4px), transparent 100%);
-          mask-image: linear-gradient(to top, black 0%, black calc(var(--safe-bottom) + 4px), transparent 100%);
-}
 
 /* ── noise grain ── */
 body::after {
