@@ -1,6 +1,5 @@
 import { createTabbar } from './components/tabbar.js';
 import { createEdgeBlur } from './components/edge-blur.js';
-import { mountDebugProbe } from './utils/debug-probe.js'; // DEBUG — remove after diagnosis
 
 import * as name       from './screens/name.js';
 import * as card       from './screens/card.js';
@@ -31,4 +30,3 @@ SCREENS.forEach(screen => screen.init());
 // 전역 컴포넌트 등록 (상·하단 엣지 블러 포함)
 createTabbar(app);
 createEdgeBlur(app);
-mountDebugProbe(); // DEBUG — remove after diagnosis

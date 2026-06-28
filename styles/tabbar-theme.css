@@ -3,6 +3,14 @@
    (레이아웃 구조는 tabbar.css 담당)
 ═══════════════════════════════════════ */
 
+/* 글라스 토큰: tabbar + safe-fill 양쪽에서 공유 */
+:root {
+  --tb-bg:          rgba(16, 16, 20, 0.60);
+  --tb-blur:        32px;
+  --tb-saturate:    200%;
+  --tb-brightness:  1.08;
+}
+
 .tabbar {
   /* ── 형태 ── */
   --tb-width:       calc(100% - 32px);
@@ -12,12 +20,6 @@
 
   /* ── 위치 — safe area 경계 바로 위 (safe-fill이 아래를 채움) ── */
   --tb-bottom:      var(--safe-bottom);
-
-  /* ── iPhone 글라스 블러 (iOS vibrancy) ── */
-  --tb-bg:          rgba(16, 16, 20, 0.60);
-  --tb-blur:        32px;
-  --tb-saturate:    200%;
-  --tb-brightness:  1.08;
 
   /* ── 테두리 ── */
   --tb-border-top:  rgba(255, 255, 255, 0.16);  /* 상단 캐치라이트 */
