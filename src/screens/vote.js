@@ -293,10 +293,6 @@ function castVote(playerId, playerName) {
     }
   }
 
-  if (MY_ROLE === 'double' && votesLeft === 1) {
-    showTooltip('남은 투표권 1표 — 같은 사람을 다시 지목할 수 있습니다.');
-  }
-
   if (votesLeft <= 0) {
     // 모든 버튼 비활성화
     document.querySelectorAll('.vote-btn').forEach(b => {
