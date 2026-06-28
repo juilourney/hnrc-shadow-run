@@ -104,19 +104,23 @@
   z-index: 2;
 }
 
-/* tab bar — 화면 바닥 고정 오버레이 */
+/* tab bar — 플로팅 캡슐 오버레이 */
 .tabbar {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: calc(100% - 24px); max-width: 406px; z-index: 20;
-  border-radius: 26px 26px 0 0;
-  background: rgba(18,18,20,.75);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,.08);
-  border-bottom: none;
-  box-shadow: 0 20px 50px -20px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06);
-  display: flex; align-items: flex-end; justify-content: space-around;
-  padding: 6px 4px max(calc(var(--safe-bottom) - 22px), 6px);
-  height: auto; min-height: 48px;
+  position: fixed;
+  bottom: calc(var(--safe-bottom) + 12px);
+  left: 50%; transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 400px; z-index: 20;
+  border-radius: 24px;
+  background: rgba(18,18,20,.82);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow:
+    0 8px 32px -8px rgba(0,0,0,.7),
+    0 2px 8px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 6px 4px;
+  height: auto; min-height: 52px;
 }
 .tab {
   display: flex; flex-direction: column; align-items: center; gap: 3px;

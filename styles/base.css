@@ -100,4 +100,4 @@ body::after {
 ═══════════════════════════════════════ */
 .pt-safe { padding-top: calc(var(--safe-top) + 54px); }
 .pb-safe { padding-bottom: calc(var(--safe-bottom) + 16px); }
-.pb-tab  { padding-bottom: calc(var(--safe-bottom) + 88px); }
+.pb-tab  { padding-bottom: calc(var(--safe-bottom) + 88px + 12px); }
