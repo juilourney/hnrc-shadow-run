@@ -1,0 +1,16 @@
+/* ═══════════════════════════════════════
+   STATUS BAR & SECTION LABELS
+═══════════════════════════════════════ */
+
+/* status bar */
+.statusbar {
+  height: calc(var(--safe-top) + 44px);
+  padding-top: var(--safe-top);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-left: 22px; padding-right: 22px; padding-bottom: 8px;
+  font-family: 'Space Grotesk'; font-size: 13px; font-weight: 600; color: #d4d4d8;
+  position: relative; z-index: 10;
+}
+
+/* eyebrow */
+.eyebrow { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; }

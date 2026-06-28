@@ -1,0 +1,19 @@
+/* ═══════════════════════════════════════
+   FORMS
+═══════════════════════════════════════ */
+
+/* input */
+.input {
+  width: 100%; padding: 16px 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  font-size: 16px; font-family: inherit; color: #fafafa;
+  outline: none; appearance: none;
+  transition: border-color .3s, box-shadow .3s;
+}
+.input:focus {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+.input::placeholder { color: #52525b; }

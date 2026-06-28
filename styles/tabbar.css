@@ -1,0 +1,61 @@
+/* ═══════════════════════════════════════
+   GLOBAL TAB BAR
+═══════════════════════════════════════ */
+
+/* tab bar — 화면 바닥 고정 오버레이 */
+.tabbar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 24px); max-width: 406px; z-index: 20;
+  border-radius: 26px 26px 0 0;
+  background: rgba(18,18,20,.75);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-bottom: none;
+  box-shadow: 0 20px 50px -20px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06);
+  display: flex; align-items: flex-end; justify-content: space-around;
+  /* Apple HIG: Home Indicator(safe-area) 위로 콘텐츠를 띄우되, 과한 여백은 줄인다.
+     iPhone(safe ≈ 34px) → 약 18px, 노치 없는 기기 → 최소 8px. safe-area는 유지. */
+  padding: 6px 4px max(calc(var(--safe-bottom) - 16px), 8px);
+  height: auto; min-height: 48px;
+}
+.tab {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 500; color: #52525b; flex: 1;
+  padding: 4px 0; cursor: pointer;
+  transition: color .3s var(--spring);
+}
+.tab.on { color: var(--accent); }
+.tab-icon {
+  width: 40px; height: 28px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .3s var(--spring);
+  font-size: 18px;
+}
+.tab.on .tab-icon { background: var(--accent-tint); }
+
+/* tab icon shapes */
+[class^="ti-"] {
+  display: block; position: relative; margin: 0 auto; color: inherit;
+}
+.ti-home-dot { width: 14px; height: 14px; background: currentColor; border-radius: 3px; }
+.ti-bolt {
+  width: 10px; height: 17px; background: currentColor;
+  clip-path: polygon(68% 0%, 18% 52%, 52% 48%, 32% 100%, 82% 48%, 48% 52%);
+}
+.ti-vote {
+  width: 14px; height: 14px; border: 2px solid currentColor; border-radius: 50%;
+}
+.ti-users { width: 18px; height: 16px; }
+.ti-users::before {
+  content: ''; display: block;
+  width: 9px; height: 9px; background: currentColor; border-radius: 50%; margin: 0 auto;
+}
+.ti-users::after {
+  content: ''; display: block;
+  width: 15px; height: 6px; background: currentColor; border-radius: 4px 4px 0 0;
+  margin: 2px auto 0;
+}
+.ti-book {
+  width: 14px; height: 17px; background: currentColor;
+  border-radius: 1px 3px 3px 1px; box-shadow: -3px 0 0 currentColor;
+}

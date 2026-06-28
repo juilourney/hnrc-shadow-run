@@ -1,0 +1,74 @@
+/* ═══════════════════════════════════════
+   CARDS & SURFACES (bezel · divider · gauge · flip · role pill)
+═══════════════════════════════════════ */
+
+/* bezel card */
+.bezel {
+  background: rgba(255,255,255,.045);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 20px;
+}
+.bezel-in {
+  background: rgba(255,255,255,.025);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.10);
+  border-radius: 16px;
+}
+
+/* accent bezel */
+.bezel-accent {
+  background: var(--accent-tint);
+  border: 1px solid var(--accent-border);
+  border-radius: 20px;
+  box-shadow: 0 0 40px -15px var(--accent-glow);
+}
+
+/* divider */
+.div-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.09), transparent); }
+
+/* gauge */
+.gauge-wrap {
+  position: relative; height: 14px; border-radius: 99px;
+  background: rgba(255,255,255,.06);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.6);
+}
+.gauge-bar {
+  position: absolute; left: 50%; top: 0; bottom: 0;
+  border-radius: 0 99px 99px 0;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+  box-shadow: 0 0 16px var(--accent-glow);
+  transition: width .8s var(--spring);
+}
+.gauge-center {
+  position: absolute; left: 50%; top: -5px; bottom: -5px; width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(#fff, rgba(255,255,255,.2));
+  z-index: 2;
+}
+
+/* card flip */
+.flip-container { perspective: 1200px; }
+.flip-inner {
+  position: relative; transform-style: preserve-3d;
+}
+.flip-inner.spinning {
+  animation: card-spin-reveal 3.5s linear forwards;
+}
+.flip-inner.flipped { transform: rotateY(1260deg); }
+.flip-face {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: 28px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+}
+.flip-back { transform: rotateY(180deg); }
+
+/* role pill grid */
+.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.role-pill {
+  border-radius: 18px; padding: 16px 14px; text-align: left; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(255,255,255,.04);
+  transition: all .4s var(--spring);
+}
+.role-pill:active { transform: scale(.96); }

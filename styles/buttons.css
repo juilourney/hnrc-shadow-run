@@ -1,0 +1,31 @@
+/* ═══════════════════════════════════════
+   BUTTONS & CHIPS
+═══════════════════════════════════════ */
+
+/* buttons */
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer; font-family: inherit;
+  border-radius: 16px; font-size: 16px; font-weight: 600;
+  transition: transform .4s var(--spring), box-shadow .4s var(--spring);
+  user-select: none;
+}
+.btn:active { transform: scale(.96); }
+.btn-primary {
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+  color: #030a12;
+  box-shadow: 0 10px 30px -8px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn-secondary {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.09);
+  color: #e4e4e7;
+}
+.btn:hover:not(:active) { transform: scale(1.015); }
+
+/* chip */
+.chip {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600; letter-spacing: .04em;
+  padding: 4px 11px; border-radius: 99px;
+}

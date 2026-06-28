@@ -1,71 +1,32 @@
-import { goToScreen } from './utils/nav.js';
-import { render as renderName, init as initName }               from './screens/name.js';
-import { render as renderCard, init as initCard }              from './screens/card.js';
-import { render as renderRole, init as initRole }              from './screens/role.js';
-import { render as renderDash, init as initDash }               from './screens/dash.js';
-import { render as renderBolt, init as initBolt }               from './screens/bolt.js';
-import { render as renderBoltJoin, init as initBoltJoin }       from './screens/bolt-join.js';
-import { render as renderBoltDetail, init as initBoltDetail }   from './screens/bolt-detail.js';
-import { render as renderBoltBuff, init as initBoltBuff }       from './screens/bolt-buff.js';
-import { render as renderBoltResult, init as initBoltResult }   from './screens/bolt-result.js';
-import { render as renderVote, init as initVote }               from './screens/vote.js';
-import { render as renderMembers, init as initMembers }         from './screens/members.js';
-import { render as renderGuide, init as initGuide }             from './screens/guide.js';
-import { render as renderSettings, init as initSettings }       from './screens/settings.js';
-import { render as renderWaiting, init as initWaiting }         from './screens/waiting.js';
+import { createTabbar } from './components/tabbar.js';
+import { createEdgeBlur } from './components/edge-blur.js';
 
-document.getElementById('app').innerHTML =
-  renderName() +
-  renderCard() +
-  renderRole() +
-  renderDash() +
-  renderBolt() +
-  renderBoltJoin() +
-  renderBoltDetail() +
-  renderBoltBuff() +
-  renderBoltResult() +
-  renderVote() +
-  renderMembers() +
-  renderGuide() +
-  renderSettings() +
-  renderWaiting();
+import * as name       from './screens/name.js';
+import * as card       from './screens/card.js';
+import * as role       from './screens/role.js';
+import * as dash       from './screens/dash.js';
+import * as bolt       from './screens/bolt.js';
+import * as boltJoin   from './screens/bolt-join.js';
+import * as boltDetail from './screens/bolt-detail.js';
+import * as boltBuff   from './screens/bolt-buff.js';
+import * as boltResult from './screens/bolt-result.js';
+import * as vote       from './screens/vote.js';
+import * as members    from './screens/members.js';
+import * as guide      from './screens/guide.js';
+import * as settings   from './screens/settings.js';
+import * as waiting    from './screens/waiting.js';
 
-initName();
-initCard();
-initRole();
-initDash();
-initBolt();
-initBoltJoin();
-initBoltDetail();
-initBoltBuff();
-initBoltResult();
-initVote();
-initMembers();
-initGuide();
-initSettings();
-initWaiting();
+// 화면 등록 (Screen Registry) — render/init 호출 순서를 그대로 결정한다.
+const SCREENS = [
+  name, card, role, dash, bolt, boltJoin, boltDetail, boltBuff, boltResult,
+  vote, members, guide, settings, waiting,
+];
 
-// 전역 탭바 — 단일 요소, 화면 전환 시 고정
-const tabbarEl = document.createElement('div');
-tabbarEl.id = 'global-tabbar';
-tabbarEl.className = 'tabbar';
-tabbarEl.style.cssText = 'display:none;';
-tabbarEl.innerHTML = `
-  <div class="tab" data-tab="home"><div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span></div>
-  <div class="tab" data-tab="bolt"><div class="tab-icon"><span class="ti-bolt"></span></div><span>번개</span></div>
-  <div class="tab" data-tab="vote"><div class="tab-icon"><span class="ti-vote"></span></div><span>투표</span></div>
-  <div class="tab" data-tab="members"><div class="tab-icon"><span class="ti-users"></span></div><span>참가자</span></div>
-  <div class="tab" data-tab="guide"><div class="tab-icon"><span class="ti-book"></span></div><span>가이드</span></div>
-`;
-const TAB_SCREEN_MAP = { home: 's-dash', bolt: 's-bolt', vote: 's-vote', members: 's-members', guide: 's-guide' };
-tabbarEl.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => goToScreen(TAB_SCREEN_MAP[tab.dataset.tab]));
-});
-document.getElementById('app').appendChild(tabbarEl);
+// 앱 초기화
+const app = document.getElementById('app');
+app.innerHTML = SCREENS.map(screen => screen.render()).join('');
+SCREENS.forEach(screen => screen.init());
 
-// ── 하단 여백을 부드럽게 덮는 그라데이션 블러 (버튼 가림 방지) ──
-const bottomBlur = document.createElement('div');
-bottomBlur.className = 'bottom-fade-blur';
-document.getElementById('app').appendChild(bottomBlur);
-
-
+// 전역 컴포넌트 등록 (상·하단 엣지 블러 포함)
+createTabbar(app);
+createEdgeBlur(app);
