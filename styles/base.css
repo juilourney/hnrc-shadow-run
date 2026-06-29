@@ -18,7 +18,7 @@ body {
 ═══════════════════════════════════════ */
 #app {
   position: fixed; inset: 0;
-  background: var(--ink);   /* fixed inset:0가 인디케이터까지 덮고, 이 배경으로 채움 → 하단 검정 여백 제거 */
+  background: inherit;
   max-width: 430px;
   margin: 0 auto;
   overflow: hidden;
@@ -31,6 +31,7 @@ body {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   overflow: hidden;
+  background: var(--ink);
   opacity: 0; pointer-events: none;
   transition: opacity .35s var(--spring), transform .45s var(--spring);
   transform: translateX(32px);
