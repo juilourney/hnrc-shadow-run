@@ -3,14 +3,12 @@
 ═══════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 * { word-break: keep-all; -webkit-tap-highlight-color: transparent; }
-html { height: 100dvh; background: var(--ink); }
+html { background: var(--ink); }
 body {
-  min-height: 100dvh;
   font-family: 'Pretendard', system-ui, sans-serif;
   font-size: 16px;
   color: #fafafa;
   background: #050505;
-  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 .num { font-family: 'Space Grotesk', sans-serif; font-feature-settings: 'tnum'; }
@@ -20,6 +18,7 @@ body {
 ═══════════════════════════════════════ */
 #app {
   position: fixed; inset: 0;
+  background: var(--ink);   /* fixed inset:0가 인디케이터까지 덮고, 이 배경으로 채움 → 하단 검정 여백 제거 */
   max-width: 430px;
   margin: 0 auto;
   overflow: hidden;
