@@ -205,7 +205,7 @@ export function render() {
       style="position:relative; z-index:1; background:#111113; border-radius:28px 28px 0 0;
         width:100%; transform:translateY(100%); transition:transform .4s var(--spring);
         border-top:1px solid rgba(255,255,255,.08);
-        padding:24px 20px; padding-bottom:calc(var(--safe-bottom) + 24px);">
+        padding:24px 20px; padding-bottom:24px;">
       <div style="display:flex; justify-content:center; margin-bottom:18px;">
         <div style="width:36px; height:4px; border-radius:99px; background:rgba(255,255,255,.15);"></div>
       </div>
@@ -334,7 +334,7 @@ function showTooltip(msg) {
   const t = document.createElement('div');
   t.textContent = msg;
   t.style.cssText = `
-    position:absolute; bottom:calc(var(--safe-bottom) + 20px); left:18px; right:18px;
+    position:absolute; bottom:20px; left:18px; right:18px;
     background:#1c1c1e; border:1px solid rgba(251,113,133,.25); border-radius:14px;
     padding:14px 16px; font-size:13px; color:#fb7185; text-align:center;
     z-index:35; animation:fadeUp .3s var(--spring);

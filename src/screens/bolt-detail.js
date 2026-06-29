@@ -105,7 +105,7 @@ export function render() {
   </div>
 
   <!-- 하단 버튼 -->
-  <div id="bolt-detail-btn-area" style="position:absolute; left:18px; right:18px; bottom:calc(var(--safe-bottom) + 16px); display:flex; gap:10px; z-index:30">
+  <div id="bolt-detail-btn-area" style="position:absolute; left:18px; right:18px; bottom:16px; display:flex; gap:10px; z-index:30">
     <button class="btn btn-secondary" style="width:80px; height:56px; font-size:14px" id="bolt-detail-cancel">취소</button>
     <button class="btn btn-primary" style="flex:1; height:56px" id="bolt-detail-action">번개 시작하기</button>
   </div>

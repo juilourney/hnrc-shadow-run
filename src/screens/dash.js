@@ -134,7 +134,7 @@ export function render() {
         </div>
       </div>
 
-      <div style="padding:0 18px calc(var(--safe-bottom) + 32px);">
+      <div style="padding:0 18px 30px;">
 
         <div style="position:sticky; top:66px; z-index:5; background:#111113; padding:14px 0 8px;">
           <p style="font-size:11px; font-weight:700; color:#52525b; letter-spacing:.06em;">오늘 · 6월 27일 (금)</p>

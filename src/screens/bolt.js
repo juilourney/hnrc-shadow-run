@@ -110,7 +110,7 @@ export function render() {
       </div>
 
       <!-- 폼 -->
-      <div style="padding:24px 20px calc(var(--safe-bottom) + 32px); display:flex; flex-direction:column; gap:18px; flex:1;">
+      <div style="padding:24px 20px 30px; display:flex; flex-direction:column; gap:18px; flex:1;">
 
         <div>
           <label style="font-size:12px; color:#71717a; display:block; margin-bottom:8px; font-weight:600; letter-spacing:.04em;">제목 *</label>
@@ -171,7 +171,7 @@ export function render() {
     <div id="bolt-join-sheet"
       style="position:relative; z-index:1; background:#111113; border-radius:28px 28px 0 0;
         width:100%; transform:translateY(100%); transition:transform .45s var(--spring);
-        border-top:1px solid rgba(255,255,255,.08); padding:24px 20px; padding-bottom:calc(var(--safe-bottom) + 24px);">
+        border-top:1px solid rgba(255,255,255,.08); padding:24px 20px; padding-bottom:24px;">
       <div style="display:flex; justify-content:center; margin-bottom:20px;">
         <div style="width:36px; height:4px; border-radius:99px; background:rgba(255,255,255,.15);"></div>
       </div>
@@ -288,7 +288,7 @@ function showToast(msg) {
   toast.id = 'bolt-toast';
   toast.textContent = msg;
   toast.style.cssText = `
-    position:absolute; bottom:calc(var(--safe-bottom) + 20px); left:18px; right:18px;
+    position:absolute; bottom:20px; left:18px; right:18px;
     background:#1c1c1e; border:1px solid rgba(255,255,255,.1); border-radius:14px;
     padding:14px 16px; font-size:13px; color:#a1a1aa; text-align:center;
     z-index:100; animation:fadeUp .3s var(--spring);

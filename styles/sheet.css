@@ -18,7 +18,7 @@
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 28px 28px 0 0;
   padding: 28px 24px;
-  padding-bottom: calc(var(--safe-bottom) + 28px);
+  padding-bottom: 28px;
   transform: translateY(100%);
   transition: transform .5s var(--spring);
 }

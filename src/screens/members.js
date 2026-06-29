@@ -82,7 +82,7 @@ export function render() {
       style="position:relative; z-index:1; background:#111113; border-radius:28px 28px 0 0;
         width:100%; transform:translateY(100%); transition:transform .4s var(--spring);
         border-top:1px solid rgba(255,255,255,.08);
-        padding:24px 20px; padding-bottom:calc(var(--safe-bottom) + 24px);">
+        padding:24px 20px; padding-bottom:24px;">
       <div style="display:flex; justify-content:center; margin-bottom:18px;">
         <div style="width:36px; height:4px; border-radius:99px; background:rgba(255,255,255,.15);"></div>
       </div>
@@ -108,7 +108,7 @@ export function render() {
       style="position:relative; z-index:1; background:#111113; border-radius:28px 28px 0 0;
         width:100%; transform:translateY(100%); transition:transform .4s var(--spring);
         border-top:1px solid rgba(255,255,255,.08);
-        padding:28px 24px; padding-bottom:calc(var(--safe-bottom) + 28px); text-align:center;">
+        padding:28px 24px; padding-bottom:28px; text-align:center;">
       <div style="display:flex; justify-content:center; margin-bottom:20px;">
         <div style="width:36px; height:4px; border-radius:99px; background:rgba(255,255,255,.15);"></div>
       </div>
@@ -253,7 +253,7 @@ function showInfoToast(msg) {
   const el = document.createElement('div');
   el.textContent = msg;
   el.style.cssText = `
-    position:fixed; bottom:calc(var(--safe-bottom) + 20px); left:50%; transform:translateX(-50%);
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
     background:#1c1c1e; border:1px solid rgba(255,255,255,.12); color:#e4e4e7;
     font-size:13px; padding:10px 18px; border-radius:14px; z-index:9999;
     white-space:nowrap; max-width:90vw; white-space:normal; text-align:center;

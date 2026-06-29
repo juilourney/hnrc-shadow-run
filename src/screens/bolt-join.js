@@ -106,7 +106,7 @@ export function render() {
   </div>
 
   <!-- 시작 시뮬레이션 버튼 (대기 중에만 표시) -->
-  <div id="bolt-join-start-area" style="position:absolute; left:18px; right:18px; bottom:calc(var(--safe-bottom) + 16px); z-index:30">
+  <div id="bolt-join-start-area" style="position:absolute; left:18px; right:18px; bottom:16px; z-index:30">
     <button class="btn btn-primary" style="width:100%; height:52px; font-size:14px;" id="bolt-join-simulate-start">번개 시작됨 (시뮬레이션)</button>
   </div>
 </div>`;
