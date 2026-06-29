@@ -1,10 +1,9 @@
 let currentScreen = 's-name';
 
-const TAB_SCREENS = new Set(['s-dash', 's-bolt', 's-vote', 's-members', 's-guide', 's-settings', 's-waiting']);
+const TAB_SCREENS = new Set(['s-dash', 's-bolt', 's-vote', 's-members', 's-guide', 's-settings']);
 const SCREEN_TAB  = {
   's-dash': 'home', 's-bolt': 'bolt', 's-vote': 'vote',
   's-members': 'members', 's-guide': 'guide', 's-settings': 'guide',
-  's-waiting': 'home',
 };
 
 export function goToScreen(id) {
