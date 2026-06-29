@@ -1,5 +1,6 @@
 import { state, ROLES } from '../state.js';
 import { goToScreen } from '../utils/nav.js';
+import { MEMBERS as WAIT_MEMBERS } from './members.js';
 
 // 관리자가 설정할 게임 시작 일시 — 추후 Firebase 연동
 let GAME_START_TIME = new Date();
@@ -7,16 +8,6 @@ GAME_START_TIME.setHours(GAME_START_TIME.getHours() + 1, 0, 0, 0);
 
 export function setGameStartTime(date) { GAME_START_TIME = date; }
 
-// 대기 화면용 멤버 목록 (프로토타입 — Firebase 연동 시 교체)
-const WAIT_MEMBERS = [
-  { id: 'm0', name: '나',    isSelf: true,  km: 38.2 },
-  { id: 'm1', name: '김민수', isSelf: false, km: 42.3 },
-  { id: 'm2', name: '박현우', isSelf: false, km: 38.7 },
-  { id: 'm3', name: '이서연', isSelf: false, km: 51.2 },
-  { id: 'm4', name: '정윤아', isSelf: false, km: 44.1 },
-  { id: 'm5', name: '최준호', isSelf: false, km: 29.8 },
-  { id: 'm6', name: '한지우', isSelf: false, km: 33.5 },
-];
 
 function rowG(label, value, color = '#a1a1aa') {
   return `
@@ -187,22 +178,6 @@ export function render() {
   </div>
 
   <!-- 내부 탭바 (홈·참가자·가이드만) - 본게임처럼 오른쪽 사이드 스타일 적용 -->
-  <style>
-    #waiting-tabbar-handle {
-      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-      width: 26px; height: 60px; z-index: 51; border-radius: 40px 0 0 40px; cursor: pointer;
-      background: var(--tb-bg);
-      backdrop-filter: blur(var(--tb-blur)) saturate(var(--tb-saturate)) brightness(var(--tb-brightness));
-      -webkit-backdrop-filter: blur(var(--tb-blur)) saturate(var(--tb-saturate)) brightness(var(--tb-brightness));
-      border: 1px solid var(--tb-border-side); border-right: none;
-      box-shadow: -4px 0 14px rgba(0, 0, 0, 0.40), inset 1px 0 0 var(--tb-border-top);
-      display: flex; align-items: center; justify-content: center; transition: all 0.25s var(--spring);
-    }
-    #waiting-tabbar-handle:active { transform: translateY(-50%) scale(0.94); }
-    #waiting-tabbar-handle.hidden { opacity: 0; transform: translateY(-50%) translateX(12px); pointer-events: none; }
-    
-    #waiting-tabbar { z-index: 50; }
-  </style>
   <div id="waiting-tabbar-handle"><span class="handle-grip"></span></div>
   <div id="waiting-tabbar" class="tabbar">
     <div class="tab on" id="wtab-home"><div class="tab-icon"><span class="ti-home-dot"></span></div></div>

@@ -20,7 +20,7 @@ const ROLE_META = {
 
 // publicTeam: 투표로 밝혀진 팀 (모두에게 공개)
 // secretTeam / secretRole: 능력으로 알 수 있는 실제 값 (프로토타입용)
-const MEMBERS = [
+export const MEMBERS = [
   { id: 'm0', name: '나',    isSelf: true,  km: 38.2, publicTeam: null,    secretTeam: 'pacer', secretRole: 'detective' },
   { id: 'm1', name: '김민수', isSelf: false, km: 42.3, publicTeam: 'pacer', secretTeam: 'pacer', secretRole: 'elite' },
   { id: 'm2', name: '박현우', isSelf: false, km: 38.7, publicTeam: null,    secretTeam: 'ghost', secretRole: 'runner' },

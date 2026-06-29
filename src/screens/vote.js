@@ -238,7 +238,7 @@ export function init() {
   }, 1000);
 
   // 투표 상태
-  let votesLeft = TOTAL_VOTES;
+  votesLeft = TOTAL_VOTES;
   let pendingPlayerId = null;
   let pendingPlayerName = null;
 
@@ -279,9 +279,9 @@ export function init() {
 
 // 플레이어별 지목 횟수 추적
 const voteCount = {};
+let votesLeft = 0;
 
 function castVote(playerId, playerName) {
-  let votesLeft = parseInt(document.getElementById('votes-remaining').textContent);
   votesLeft--;
   document.getElementById('votes-remaining').textContent = votesLeft;
 

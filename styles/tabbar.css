@@ -134,6 +134,22 @@
   color: var(--accent);
 }
 
+/* ── 대기 화면 내부 탭바 (position:absolute — screen 기준) ── */
+#waiting-tabbar-handle {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 60px; z-index: 51; border-radius: 40px 0 0 40px; cursor: pointer;
+  background: var(--tb-bg);
+  backdrop-filter: blur(var(--tb-blur)) saturate(var(--tb-saturate)) brightness(var(--tb-brightness));
+  -webkit-backdrop-filter: blur(var(--tb-blur)) saturate(var(--tb-saturate)) brightness(var(--tb-brightness));
+  border: 1px solid var(--tb-border-side); border-right: none;
+  box-shadow: -4px 0 14px rgba(0,0,0,.40), inset 1px 0 0 var(--tb-border-top);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s var(--spring);
+}
+#waiting-tabbar-handle:active { transform: translateY(-50%) scale(0.94); }
+#waiting-tabbar-handle.hidden { opacity: 0; transform: translateY(-50%) translateX(12px); pointer-events: none; }
+#waiting-tabbar { z-index: 50; }
+
 /* ── 탭 아이콘 모양 ── */
 [class^="ti-"] {
   display: block; position: relative; margin: 0 auto; color: inherit;

@@ -10,7 +10,7 @@ export function render() {
       background:radial-gradient(circle, rgba(251,146,60,.2) 0%, transparent 70%);"></div>
   </div>
 
-  <div class="scroll-body" style="position:relative; z-index:2; padding:calc(var(--safe-top) + 20px) 22px 40px;">
+  <div class="scroll-body" style="position:relative; z-index:2; padding:calc(var(--safe-top) + 20px) 22px calc(env(safe-area-inset-bottom, 0px) + 88px);">
 
     <!-- 헤더 -->
     <div class="anim-up" style="padding-top:8px; text-align:center; margin-bottom:20px;">
@@ -80,7 +80,7 @@ export function render() {
 
   </div>
 
-  <div style="position:absolute; left:18px; right:18px; bottom:16px; z-index:30">
+  <div style="position:absolute; left:18px; right:18px; bottom:calc(env(safe-area-inset-bottom, 0px) + 16px); z-index:30">
     <button class="btn btn-primary" style="width:100%; height:56px;" id="result-confirm-btn">확인</button>
   </div>
 </div>`;
