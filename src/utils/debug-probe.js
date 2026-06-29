@@ -11,21 +11,25 @@ export function mountDebugProbe() {
   document.body.appendChild(el);
 
   function update() {
-    const safeB = getComputedStyle(document.documentElement)
-      .getPropertyValue('--safe-bottom').trim();
-    const tb   = document.getElementById('global-tabbar');
-    const fill = document.getElementById('tabbar-safe-fill');
-    const tbRect = tb ? Math.round(tb.getBoundingClientRect().bottom) : '?';
-    const fillH  = fill ? (fill.style.height || getComputedStyle(fill).height) : '?';
-    const vvH    = window.visualViewport ? Math.round(window.visualViewport.height) : 'N/A';
+    const cs = getComputedStyle(document.documentElement);
+    const safeB = cs.getPropertyValue('--safe-bottom').trim();
+    const app = document.getElementById('app');
+    const appRect = app ? app.getBoundingClientRect() : {};
+    const htmlH = document.documentElement.clientHeight;
+    const bodyH = document.body.clientHeight;
+    const vvH = window.visualViewport ? Math.round(window.visualViewport.height) : 'N/A';
 
     el.textContent = [
-      `env(safe-b): ${safeB}`,
+      `safe-bottom: ${safeB}`,
       `innerH:      ${window.innerHeight}px`,
-      `vv.height:   ${vvH}px`,
-      `tb.bottom:   ${tbRect}px`,
-      `fill.height: ${fillH}`,
       `screen.h:    ${window.screen.height}px`,
+      `vv.height:   ${vvH}px`,
+      `html.cliH:   ${htmlH}px`,
+      `body.cliH:   ${bodyH}px`,
+      `#app.top:    ${Math.round(appRect.top)}px`,
+      `#app.bottom: ${Math.round(appRect.bottom)}px`,
+      `#app.height: ${Math.round(appRect.height)}px`,
+      `gap:         ${window.innerHeight - Math.round(appRect.bottom)}px`,
     ].join('\n');
   }
 
