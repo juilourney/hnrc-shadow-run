@@ -118,8 +118,8 @@ export function render() {
 
   <!-- 홈 패널 -->
   <div id="wpanel-home" class="scroll-body"
-    style="position:absolute; top:0; left:0; right:0; bottom:calc(var(--safe-bottom) + 78px);
-      padding:calc(var(--safe-top) + 16px) 18px 20px;">
+    style="position:absolute; inset:0;
+      padding:calc(var(--safe-top) + 16px) 18px calc(var(--safe-bottom) + 90px);">
 
     <div style="margin-bottom:20px;">
       <p style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700;
@@ -160,8 +160,8 @@ export function render() {
 
   <!-- 참가자 패널 -->
   <div id="wpanel-members" class="scroll-body"
-    style="position:absolute; top:0; left:0; right:0; bottom:calc(var(--safe-bottom) + 78px); display:none;
-      padding:calc(var(--safe-top) + 16px) 18px 20px;">
+    style="position:absolute; inset:0; display:none;
+      padding:calc(var(--safe-top) + 16px) 18px calc(var(--safe-bottom) + 90px);">
 
     <div style="margin-bottom:16px;">
       <h2 style="font-size:22px; font-weight:700; letter-spacing:-.02em;">참가자</h2>
@@ -175,8 +175,8 @@ export function render() {
 
   <!-- 가이드 패널 -->
   <div id="wpanel-guide" class="scroll-body"
-    style="position:absolute; top:0; left:0; right:0; bottom:calc(var(--safe-bottom) + 78px); display:none;
-      padding:calc(var(--safe-top) + 16px) 18px 20px;">
+    style="position:absolute; inset:0; display:none;
+      padding:calc(var(--safe-top) + 16px) 18px calc(var(--safe-bottom) + 90px);">
 
     <div style="margin-bottom:16px;">
       <h2 style="font-size:22px; font-weight:700; letter-spacing:-.02em;">가이드</h2>
@@ -186,8 +186,35 @@ export function render() {
     ${guideContent}
   </div>
 
-  <!-- 내부 탭바 (홈·참가자·가이드만) -->
-  <div class="tabbar" id="waiting-tabbar">
+  <!-- 내부 탭바 (홈·참가자·가이드만) - 하단 플로팅 스타일 적용 -->
+  <style>
+    #waiting-tabbar {
+      position: absolute;
+      bottom: calc(var(--safe-bottom) + 12px);
+      left: 18px; right: 18px;
+      height: 64px;
+      background: var(--tb-bg, rgba(16, 16, 20, 0.65));
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid var(--tb-border-side, rgba(255,255,255,0.08));
+      border-radius: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 50;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transform: none; /* override right-side peek defaults */
+      opacity: 1; pointer-events: auto;
+    }
+    #waiting-tabbar .tab {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      color: rgba(255,255,255,0.35); font-size: 11px; font-weight: 600;
+    }
+    #waiting-tabbar .tab.on { color: var(--accent); }
+    #waiting-tabbar .tab-icon { margin-bottom: 2px; }
+  </style>
+  <div id="waiting-tabbar">
     <div class="tab on" id="wtab-home">
       <div class="tab-icon"><span class="ti-home-dot"></span></div><span>홈</span>
     </div>
