@@ -29,6 +29,10 @@
   0%, 100% { box-shadow: 0 0 0 4px rgba(251,113,133,.25); }
   50%       { box-shadow: 0 0 0 8px rgba(251,113,133,.08); }
 }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .45; transform: scale(.7); }
+}
 
 @keyframes card-spin-reveal {
   0%   { transform: rotateY(0deg); }

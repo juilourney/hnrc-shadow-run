@@ -1,5 +1,6 @@
 import { createTabbar } from './components/tabbar.js';
 import { createEdgeBlur } from './components/edge-blur.js';
+import { createFeedBar } from './components/feed-bar.js';
 
 import * as name       from './screens/name.js';
 import * as card       from './screens/card.js';
@@ -30,4 +31,5 @@ SCREENS.forEach(screen => screen.init());
 // 전역 컴포넌트 등록 (상단 엣지 블러 포함)
 createTabbar(app);
 createEdgeBlur(app);
+createFeedBar(app);
 
