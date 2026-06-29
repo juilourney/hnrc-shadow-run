@@ -32,5 +32,14 @@ SCREENS.forEach(screen => screen.init());
 createTabbar(app);
 createEdgeBlur(app);
 
+// iOS PWA: 뷰포트가 홈 인디케이터 영역을 제외하므로 JS로 강제 확장
+(function forceFullScreen() {
+  const gap = window.screen.height - window.innerHeight;
+  if (gap > 0) {
+    app.style.height = window.screen.height + 'px';
+    app.style.bottom = 'auto';
+  }
+})();
+
 // 디버그: 하단 여백 진단 (진단 후 제거)
 mountDebugProbe();
