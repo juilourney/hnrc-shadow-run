@@ -53,25 +53,31 @@ export function render() {
       </div>
     </div>
 
-    <div style="width:100%;">
-      <button class="btn btn-primary" id="card-confirm-btn"
-        style="width:100%; height:56px; font-size:16px;
-          opacity:0; pointer-events:none; transform:translateY(10px);
-          transition:opacity .5s var(--spring), transform .5s var(--spring);">
-        역할 확인하기
-      </button>
+    <div style="width:100%; text-align:center; height:20px;">
+      <p id="card-continue-hint"
+        style="font-size:13px; letter-spacing:.04em; color:#52525b; font-weight:600;
+          opacity:0; transition:opacity .5s var(--spring);">
+        탭하여 계속
+      </p>
     </div>
 
   </div>
 </div>`;
 }
 
+let revealComplete = false;
+
 export function init() {
-  document.getElementById('card-flip-area').addEventListener('click', flipCard);
-  document.getElementById('card-confirm-btn').addEventListener('click', () => {
+  document.getElementById('card-flip-area').addEventListener('click', handleCardTap);
+}
+
+function handleCardTap() {
+  if (!state.cardFlipped) {
+    flipCard();
+  } else if (revealComplete) {
     prepareRoleScreen();
     goToScreen('s-role');
-  });
+  }
 }
 
 export function prepareCard() {
@@ -91,11 +97,9 @@ export function prepareCard() {
   const inner = document.getElementById('flip-inner');
   inner.classList.remove('flipped', 'spinning');
   state.cardFlipped = false;
+  revealComplete = false;
 
-  const btn = document.getElementById('card-confirm-btn');
-  btn.style.opacity      = '0';
-  btn.style.transform    = 'translateY(10px)';
-  btn.style.pointerEvents = 'none';
+  document.getElementById('card-continue-hint').style.opacity = '0';
 
   document.getElementById('card-bg-orb').style.opacity = '0';
 }
@@ -157,10 +161,8 @@ function flipCard() {
     label.textContent = 'YOUR TEAM';
 
     setTimeout(() => {
-      const btn = document.getElementById('card-confirm-btn');
-      btn.style.opacity       = '1';
-      btn.style.pointerEvents = 'all';
-      btn.style.transform     = 'translateY(0)';
+      revealComplete = true;
+      document.getElementById('card-continue-hint').style.opacity = '1';
     }, 300);
   }, { once: true });
 }

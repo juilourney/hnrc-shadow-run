@@ -78,26 +78,32 @@ export function render() {
         </div>
       </div>
 
-      <button id="role-confirm-btn" class="btn btn-primary"
-        style="width:100%; height:56px; font-size:16px;
-          opacity:0; pointer-events:none; transform:translateY(8px);
-          transition:opacity .45s .12s var(--spring), transform .45s .12s var(--spring);">
-        시작하기
-      </button>
+      <p id="role-continue-hint"
+        style="font-size:13px; letter-spacing:.04em; color:#52525b; font-weight:600; text-align:center;
+          opacity:0; transition:opacity .45s .12s var(--spring);">
+        탭하여 계속
+      </p>
 
     </div>
   </div>
 </div>`;
 }
 
+let revealComplete = false;
+
 export function init() {
-  document.getElementById('role-flip-area').addEventListener('click', flipRoleCard);
-  document.getElementById('role-confirm-btn').addEventListener('click', () => {
+  document.getElementById('role-flip-area').addEventListener('click', handleRoleTap);
+}
+
+function handleRoleTap() {
+  if (!state.roleFlipped) {
+    flipRoleCard();
+  } else if (revealComplete) {
     initPhase();
     state.roleConfirmed = true;
     prepareWaiting();
     goToScreen('s-waiting');
-  });
+  }
 }
 
 export function prepareRoleScreen() {
@@ -119,15 +125,13 @@ export function prepareRoleScreen() {
   const fi = document.getElementById('role-flip-inner');
   fi.classList.remove('flipped', 'spinning');
   state.roleFlipped = false;
+  revealComplete = false;
 
   const descEl = document.getElementById('role-desc-reveal');
-  const btnEl  = document.getElementById('role-confirm-btn');
   descEl.style.maxHeight     = '0';
   descEl.style.opacity       = '0';
   descEl.style.pointerEvents = 'none';
-  btnEl.style.opacity        = '0';
-  btnEl.style.transform      = 'translateY(8px)';
-  btnEl.style.pointerEvents  = 'none';
+  document.getElementById('role-continue-hint').style.opacity = '0';
 
   const n = state.name;
   document.getElementById('settings-name').textContent      = n || '참가자';
@@ -181,13 +185,11 @@ function flipRoleCard() {
 
     setTimeout(() => {
       const descEl = document.getElementById('role-desc-reveal');
-      const btnEl  = document.getElementById('role-confirm-btn');
       descEl.style.maxHeight     = descEl.scrollHeight + 'px';
       descEl.style.opacity       = '1';
       descEl.style.pointerEvents = 'auto';
-      btnEl.style.opacity        = '1';
-      btnEl.style.transform      = 'translateY(0)';
-      btnEl.style.pointerEvents  = 'auto';
+      revealComplete = true;
+      document.getElementById('role-continue-hint').style.opacity = '1';
     }, 300);
   }, { once: true });
 }

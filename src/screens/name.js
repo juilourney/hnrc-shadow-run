@@ -63,22 +63,23 @@ export function render() {
       </p>
     </div>
 
-    <div class="anim-up-3">
+    <div class="anim-up-3" style="margin-top:auto;">
       <label style="font-size:12px; color:#71717a; display:block; margin-bottom:8px; letter-spacing:.06em; text-transform:uppercase; font-weight:600;">이름</label>
-      <input class="input" type="text" id="name-input"
-        placeholder="홍길동"
-        autocomplete="off" autocorrect="off" spellcheck="false"
-        style="font-size:17px; font-weight:500;" />
+      <div style="display:flex; align-items:center; gap:10px;">
+        <input class="input" type="text" id="name-input"
+          placeholder="홍길동"
+          autocomplete="off" autocorrect="off" spellcheck="false"
+          style="flex:1; font-size:17px; font-weight:500;" />
+        <button id="enter-btn" disabled
+          style="width:50px; height:50px; flex-shrink:0; border-radius:15px; border:none; cursor:pointer;
+            background:rgba(255,255,255,.06); color:rgba(255,255,255,.25);
+            display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700;
+            transition:background .3s var(--spring), color .3s var(--spring);">
+          →
+        </button>
+      </div>
       <p style="font-size:13px; color:#71717a; margin-top:10px; line-height:1.5; font-weight:600;">실명으로 입장하세요</p>
     </div>
-
-    <button class="btn btn-primary anim-up-4"
-      style="width:100%; height:56px; margin-top:auto; font-size:16px; border-radius:18px;
-        background:linear-gradient(135deg, #0ea5e9, #7c3aed);
-        box-shadow: 0 10px 36px -8px rgba(100,100,240,.45), inset 0 1px 0 rgba(255,255,255,.2);"
-      id="enter-btn">
-      입장하기
-    </button>
   </div>
 </div>`;
 }
@@ -86,6 +87,13 @@ export function render() {
 export function init() {
   const input = document.getElementById('name-input');
   const btn   = document.getElementById('enter-btn');
+  input.addEventListener('input', () => {
+    const has = input.value.trim().length > 0;
+    btn.disabled = !has;
+    btn.style.background = has ? 'linear-gradient(135deg, #0ea5e9, #7c3aed)' : 'rgba(255,255,255,.06)';
+    btn.style.color      = has ? '#fff' : 'rgba(255,255,255,.25)';
+    btn.style.boxShadow  = has ? '0 6px 20px -6px rgba(100,100,240,.5)' : 'none';
+  });
   btn.addEventListener('click', enterGame);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); enterGame(); } });
 }
