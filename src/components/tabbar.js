@@ -31,12 +31,12 @@ export function createTabbar(mount) {
   // 손잡이 터치 → 탭바 펼침
   handle.addEventListener('click', e => { e.stopPropagation(); open(); });
 
-  // 탭 선택 → 화면 이동 후 즉시 닫힘
+  // 탭 선택 → 화면 이동 즉시, 사이드바는 850ms 후 닫힘
   tabbar.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', e => {
       e.stopPropagation();
       scrollToSection(TAB_SECTION_MAP[tab.dataset.tab]);
-      close();
+      setTimeout(close, 850);
     });
   });
 

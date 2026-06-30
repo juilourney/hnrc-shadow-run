@@ -5,8 +5,9 @@
 * { word-break: keep-all; -webkit-tap-highlight-color: transparent; }
 html {
   background: var(--ink);
-  overflow: hidden;
-  height: 100%;
+  /* 문서 스크롤러에 직접 snap — 고정 컨테이너 없이 섹션 안착 (검은 띠 X) */
+  /* 스냅은 JS(smart-snap)가 제어 — CSS 스냅은 긴 guide를 끌어당겨서 끔 */
+  scroll-snap-type: none;
 }
 body {
   font-family: 'Pretendard', system-ui, sans-serif;
@@ -14,8 +15,7 @@ body {
   color: #fafafa;
   background: #050505;
   -webkit-font-smoothing: antialiased;
-  overflow: hidden;
-  height: 100%;
+  overflow-x: hidden;
 }
 .num { font-family: 'Space Grotesk', sans-serif; font-feature-settings: 'tnum'; }
 
@@ -58,25 +58,52 @@ body {
 }
 .scroll-body::-webkit-scrollbar { display: none; }
 
-/* ── 게임 컨테이너 (세로 scroll-snap 풀스크린) ── */
-.game-wrap {
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: none;
-}
-.game-section {
-  flex-shrink: 0;
-  height: 100dvh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  position: relative;
-  display: flex;
-  flex-direction: column;
+/* ── 고정 배경 (팀 컬러 orb — 스크롤해도 제자리) ── */
+#game-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   overflow: hidden;
 }
+
+/* ── 게임 컨테이너 (관리앱식 자연 스크롤 — body가 스크롤, 고정 쉘 없음) ── */
+.game-wrap {
+  display: block;
+}
+.game-section {
+  min-height: 100dvh; /* 한 화면 이상 — 콘텐츠 길면 자연 확장 */
+  position: relative;
+}
 .game-section .scroll-body {
-  overscroll-behavior-y: contain;
+  flex: none;
+  overflow: visible; /* 자체 스크롤 X — 문서가 자연 스크롤 */
+}
+
+/* ── 게임 섹션 orb 배경 (name 화면과 동일 스타일) ── */
+.game-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.game-orb-a {
+  position: absolute;
+  top: -18%; left: -20%;
+  width: 70%; aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,.22) 0%, transparent 70%);
+  filter: blur(40px);
+  animation: orb-drift-a 12s ease-in-out infinite alternate;
+}
+.game-orb-b {
+  position: absolute;
+  top: 5%; right: -22%;
+  width: 65%; aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192,132,252,.18) 0%, transparent 70%);
+  filter: blur(40px);
+  animation: orb-drift-b 14s ease-in-out infinite alternate;
 }
 
 /* ── ambient mesh ── */
@@ -113,14 +140,3 @@ body::after {
 .pb-safe { padding-bottom: 36px; }
 /* 관리앱 패턴: 하단 safe-area를 더하지 않고 고정값 — 콘텐츠가 인디케이터까지 자연스럽게 확장 */
 .pb-tab  { padding-bottom: 0; }
-
-/* ── 하단 그라데이션 블러 (인스타 스타일 자연스러운 페이드 엣지) ── */
-.bottom-fade-blur {
-  position: fixed; bottom: calc(-1 * env(safe-area-inset-bottom, 0px)); left: 0; right: 0; z-index: 10;
-  height: calc(24px + env(safe-area-inset-bottom, 0px));
-  background: transparent;
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to top, black 0%, black var(--safe-bottom), transparent 100%);
-          mask-image: linear-gradient(to top, black 0%, black var(--safe-bottom), transparent 100%);
-}

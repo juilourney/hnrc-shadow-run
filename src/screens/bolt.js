@@ -97,7 +97,7 @@ export function render() {
 
       <!-- 헤더 -->
       <div style="position:sticky; top:0; background:#0e0e10; z-index:5;
-        padding:calc(var(--safe-top) + 8px) 18px 14px;
+        padding:8px 18px 14px;
         border-bottom:1px solid rgba(255,255,255,.06);
         display:flex; align-items:center; gap:14px;">
         <button id="bolt-create-close"
