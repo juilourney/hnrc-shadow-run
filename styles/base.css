@@ -58,6 +58,27 @@ body {
 }
 .scroll-body::-webkit-scrollbar { display: none; }
 
+/* ── 게임 컨테이너 (세로 scroll-snap 풀스크린) ── */
+.game-wrap {
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+.game-section {
+  flex-shrink: 0;
+  height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.game-section .scroll-body {
+  overscroll-behavior-y: contain;
+}
+
 /* ── ambient mesh ── */
 .mesh-pacer {
   background:

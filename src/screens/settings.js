@@ -1,7 +1,7 @@
 
 export function render() {
   return `
-<div class="screen" id="s-settings">
+<div class="game-section" id="gs-settings">
   <div class="scroll-body pb-tab" style="padding:calc(var(--safe-top) + 12px) 18px 0">
     <div class="anim-up" style="margin-bottom:16px">
       <h2 style="font-size:22px; font-weight:700; letter-spacing:-.02em">설정</h2>

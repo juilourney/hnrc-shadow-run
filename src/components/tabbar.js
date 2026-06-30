@@ -1,6 +1,6 @@
-import { goToScreen } from '../utils/nav.js';
+import { scrollToSection } from '../utils/nav.js';
 
-const TAB_SCREEN_MAP = { home: 's-dash', bolt: 's-bolt', vote: 's-vote', members: 's-members', guide: 's-guide' };
+const TAB_SECTION_MAP = { home: 'gs-dash', bolt: 'gs-bolt', vote: 'gs-vote', members: 'gs-members', guide: 'gs-guide' };
 
 const TAB_MARKUP = `
   <div class="tab" data-tab="home"><div class="tab-icon"><span class="ti-home-dot"></span></div></div>
@@ -35,7 +35,7 @@ export function createTabbar(mount) {
   tabbar.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', e => {
       e.stopPropagation();
-      goToScreen(TAB_SCREEN_MAP[tab.dataset.tab]);
+      scrollToSection(TAB_SECTION_MAP[tab.dataset.tab]);
       close();
     });
   });

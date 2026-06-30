@@ -65,7 +65,7 @@ function boltCard(bolt, animClass) {
 
 export function render() {
   return `
-<div class="screen" id="s-bolt">
+<div class="game-section" id="gs-bolt">
   <!-- 번개 목록 뷰 -->
   <div id="bolt-list-view" class="scroll-body" style="padding:calc(var(--safe-top) + 12px) 18px 40px">
     <div class="anim-up" style="padding-top:4px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between">

@@ -35,7 +35,7 @@ function para(text) {
 
 export function render() {
   return `
-<div class="screen" id="s-guide">
+<div class="game-section" id="gs-guide">
   <div class="scroll-body" style="padding:calc(var(--safe-top) + 12px) 18px 40px">
 
     <div class="anim-up" style="padding-top:4px; margin-bottom:20px;">

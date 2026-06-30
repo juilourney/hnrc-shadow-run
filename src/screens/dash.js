@@ -2,7 +2,7 @@ import { goToScreen } from '../utils/nav.js';
 
 export function render() {
   return `
-<div class="screen" id="s-dash">
+<div class="game-section" id="gs-dash">
   <div class="scroll-body pb-tab" style="padding:calc(var(--safe-top) + 12px) 18px 0">
 
     <!-- ① 실시간 줄다리기 (게이지 카드 — 최상단) -->

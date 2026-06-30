@@ -75,7 +75,7 @@ export function render() {
   `).join('');
 
   return `
-<div class="screen" id="s-vote">
+<div class="game-section" id="gs-vote">
   <!-- 투표 컨텐츠 -->
   <div class="scroll-body" style="padding:calc(var(--safe-top) + 12px) 18px 40px">
 

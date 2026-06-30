@@ -189,7 +189,7 @@ export function render() {
 
 export function init() {
   document.getElementById('waiting-start-sim').addEventListener('click', () => {
-    goToScreen('s-dash');
+    goToScreen('s-game');
   });
 
   const tb = document.getElementById('waiting-tabbar');

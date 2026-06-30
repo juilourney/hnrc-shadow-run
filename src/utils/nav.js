@@ -1,40 +1,66 @@
 let currentScreen = 's-name';
 
-const TAB_SCREENS = new Set(['s-dash', 's-bolt', 's-vote', 's-members', 's-guide', 's-settings']);
-const SCREEN_TAB  = {
-  's-dash': 'home', 's-bolt': 'bolt', 's-vote': 'vote',
-  's-members': 'members', 's-guide': 'guide', 's-settings': 'guide',
+const SECTION_TAB = {
+  'gs-dash': 'home', 'gs-bolt': 'bolt', 'gs-vote': 'vote',
+  'gs-members': 'members', 'gs-guide': 'guide', 'gs-settings': 'guide',
 };
 
 export function goToScreen(id) {
+  // 게임 섹션(gs-*)은 스크롤 네비게이션으로 위임
+  if (id.startsWith('gs-')) { scrollToSection(id); return; }
+
   const prev = document.getElementById(currentScreen);
   const next = document.getElementById(id);
   if (!next || id === currentScreen) return;
+
   prev.classList.remove('active');
   prev.classList.add('exit-left');
   setTimeout(() => prev.classList.remove('exit-left'), 500);
+
   next.classList.add('active');
   currentScreen = id;
-  const sb = next.querySelector('.scroll-body');
-  if (sb) sb.scrollTop = 0;
-  syncTabbar(id);
-}
 
-export function syncTabbar(id) {
   const tb     = document.getElementById('global-tabbar');
   const handle = document.getElementById('tabbar-handle');
   if (!tb) return;
-  // 화면 전환 시 항상 닫힌(손잡이) 상태로 시작
   tb.classList.remove('open');
   if (handle) handle.classList.remove('hidden');
-  if (TAB_SCREENS.has(id)) {
+
+  if (id === 's-game') {
     tb.style.display = 'flex';
     if (handle) handle.style.display = 'flex';
-    tb.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-    const active = tb.querySelector(`[data-tab="${SCREEN_TAB[id]}"]`);
-    if (active) active.classList.add('on');
+    setActiveTab('home');
   } else {
     tb.style.display = 'none';
     if (handle) handle.style.display = 'none';
   }
+}
+
+export function scrollToSection(gsId) {
+  const gameWrap = document.getElementById('s-game');
+  const enter = !gameWrap.classList.contains('active');
+
+  if (enter) {
+    goToScreen('s-game');
+    // 트랜지션 뒤 즉시 해당 섹션으로 점프
+    setTimeout(() => {
+      document.getElementById(gsId)?.scrollIntoView({ behavior: 'instant' });
+      setActiveTab(SECTION_TAB[gsId] || 'home');
+    }, 60);
+  } else {
+    document.getElementById(gsId)?.scrollIntoView({ behavior: 'smooth' });
+    setActiveTab(SECTION_TAB[gsId] || 'home');
+  }
+}
+
+export function setActiveTab(tabName) {
+  const tb = document.getElementById('global-tabbar');
+  if (!tb) return;
+  tb.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  tb.querySelector(`[data-tab="${tabName}"]`)?.classList.add('on');
+}
+
+// IntersectionObserver 콜백용 — main.js에서 연결
+export function syncTabbarOnScroll(gsId) {
+  setActiveTab(SECTION_TAB[gsId] || 'home');
 }

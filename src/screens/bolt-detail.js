@@ -113,8 +113,8 @@ export function render() {
 }
 
 export function init() {
-  document.getElementById('bolt-detail-back').addEventListener('click', () => goToScreen('s-bolt'));
-  document.getElementById('bolt-detail-cancel').addEventListener('click', () => goToScreen('s-bolt'));
+  document.getElementById('bolt-detail-back').addEventListener('click', () => goToScreen('gs-bolt'));
+  document.getElementById('bolt-detail-cancel').addEventListener('click', () => goToScreen('gs-bolt'));
 
   let started = false;
   document.getElementById('bolt-detail-action').addEventListener('click', () => {

@@ -88,6 +88,6 @@ export function render() {
 
 export function init() {
   document.getElementById('result-confirm-btn').addEventListener('click', () => {
-    goToScreen('s-bolt');
+    goToScreen('gs-bolt');
   });
 }

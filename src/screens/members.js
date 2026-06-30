@@ -42,7 +42,7 @@ export function render() {
     : `🕵️ 역할 확인 남은 횟수: ${ABILITY_LIMIT} / ${ABILITY_LIMIT}회`;
 
   return `
-<div class="screen" id="s-members">
+<div class="game-section" id="gs-members">
 
 
   <div class="scroll-body" style="padding:calc(var(--safe-top) + 12px) 18px 40px">

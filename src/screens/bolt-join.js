@@ -113,11 +113,11 @@ export function render() {
 }
 
 export function init() {
-  document.getElementById('bolt-join-back').addEventListener('click', () => goToScreen('s-bolt'));
+  document.getElementById('bolt-join-back').addEventListener('click', () => goToScreen('gs-bolt'));
 
   document.getElementById('bolt-join-cancel-btn').addEventListener('click', () => {
     cancelJoin();
-    goToScreen('s-bolt');
+    goToScreen('gs-bolt');
   });
 
   document.getElementById('bolt-join-simulate-start').addEventListener('click', () => {
