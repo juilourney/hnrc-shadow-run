@@ -271,7 +271,12 @@ function initPacePicker() {
     </button>`).join('');
 
   // pointerdown에서 focus를 막아 iOS에서 입력칸으로 스크롤 점프하는 문제 방지
-  input.addEventListener('pointerdown', (e) => { e.preventDefault(); openPacePicker(); });
+  // 열기 전에 현재 포커스(거리 입력 등)를 blur해서 키보드를 접음
+  input.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    document.activeElement?.blur();
+    openPacePicker();
+  });
   document.getElementById('pace-picker-backdrop').addEventListener('click', closePacePicker);
 
   opts.querySelectorAll('.pace-opt').forEach(btn => {

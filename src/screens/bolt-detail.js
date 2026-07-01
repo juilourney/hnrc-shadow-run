@@ -1,5 +1,5 @@
 import { goToScreen } from '../utils/nav.js';
-import { getBolts, getPlayers, completeBolt } from '../store.js';
+import { getBolts, getPlayers, completeBolt, toggleBoltLock } from '../store.js';
 
 let activeBoltId = 'b1'; // 현재 방장 뷰로 연 번개
 let targetKm   = 8;      // 번개 설정 거리 (이 이상 달려야 인증)
@@ -26,6 +26,9 @@ export function openHostView(boltId) {
   const on = bolt.isSingleTeam ? '' : 'none';
   document.getElementById('detail-singleteam-notice').style.display   = on;
   document.getElementById('checklist-singleteam-notice').style.display = on;
+
+  // 잠금 토글 — 해당 번개의 실제 상태 반영 (신규 번개는 기본 해제)
+  applyLockToggle(document.getElementById('host-lock-toggle'), bolt.locked);
 
   // 참가자 목록 + 체크인 체크박스
   const players = getPlayers();
@@ -109,8 +112,8 @@ export function render() {
         <p style="font-size:14px; font-weight:600">단일팀 번개로 잠금</p>
         <p style="font-size:12px; color:#52525b; margin-top:3px">외부인 입장을 차단합니다</p>
       </div>
-      <div id="host-lock-toggle" style="width:44px; height:26px; border-radius:99px; background:var(--accent-deep); position:relative; cursor:pointer; transition:.4s var(--spring)">
-        <span style="position:absolute; right:3px; top:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:.4s var(--spring)"></span>
+      <div id="host-lock-toggle" class="unlocked" style="width:44px; height:26px; border-radius:99px; background:rgba(255,255,255,.10); position:relative; cursor:pointer; transition:.4s var(--spring)">
+        <span style="position:absolute; left:3px; top:3px; width:20px; height:20px; border-radius:50%; background:#52525b; transition:.4s var(--spring)"></span>
       </div>
     </div>
 
@@ -181,17 +184,25 @@ export function init() {
 
   document.getElementById('host-lock-toggle').addEventListener('click', function() {
     this.classList.toggle('unlocked');
-    const dot = this.querySelector('span');
-    if (this.classList.contains('unlocked')) {
-      this.style.background = 'rgba(255,255,255,.10)';
-      dot.style.right = ''; dot.style.left = '3px';
-      dot.style.background = '#52525b';
-    } else {
-      this.style.background = 'var(--accent-deep)';
-      dot.style.left = ''; dot.style.right = '3px';
-      dot.style.background = '#fff';
-    }
+    const locked = !this.classList.contains('unlocked');
+    applyLockToggle(this, locked);
+    toggleBoltLock(activeBoltId, locked); // 잠금은 옵션 — 기본 해제
   });
+}
+
+// 잠금 토글 시각 반영 (locked=true면 ON)
+function applyLockToggle(el, locked) {
+  el.classList.toggle('unlocked', !locked);
+  const dot = el.querySelector('span');
+  if (locked) {
+    el.style.background = 'var(--accent-deep)';
+    dot.style.left = ''; dot.style.right = '3px';
+    dot.style.background = '#fff';
+  } else {
+    el.style.background = 'rgba(255,255,255,.10)';
+    dot.style.right = ''; dot.style.left = '3px';
+    dot.style.background = '#52525b';
+  }
 }
 
 // ── 제출 버튼 활성/비활성 ────────────────────────────────
