@@ -1,4 +1,10 @@
 import { goToScreen } from '../utils/nav.js';
+import { subscribe, getPlayers, getMe, getVote, castVote as storeCastVote, tallyVote, ROLES } from '../store.js';
+
+const TEAM_META = {
+  pacer: { label: '페이서', color: '#38bdf8', bg: 'rgba(56,189,248,.1)',  border: 'rgba(56,189,248,.25)' },
+  ghost: { label: '고스트', color: '#a78bfa', bg: 'rgba(167,139,250,.1)', border: 'rgba(167,139,250,.25)' },
+};
 
 // 투표 기간 체크 — 월(1), 목(4) 18:00~22:00
 function getVoteStatus() {
@@ -31,29 +37,11 @@ function getVoteStatus() {
   return { isVotingNow, nextLabel };
 }
 
-// 프로토타입 상태 — 실제 앱에서는 Firebase + 서버 시간으로 판단
-const MY_ROLE = 'double'; // 'runner' | 'double'
-const TOTAL_VOTES = MY_ROLE === 'double' ? 2 : 1;
-
-const PLAYERS = [
-  { id: 'p1', name: '김민수', km: 42.3 },
-  { id: 'p2', name: '박현우', km: 38.7 },
-  { id: 'p3', name: '이서연', km: 51.2 },
-  { id: 'p4', name: '최준호', km: 29.8 },
-  { id: 'p5', name: '정윤아', km: 44.1 },
-];
-
-// 결과 시뮬레이션용 (최다 득표자)
-const RESULT = {
-  name: '이서연',
-  team: '페이서',
-  teamColor: '#38bdf8',
-  isElite: false,
-};
-
 export function render() {
   const { nextLabel } = getVoteStatus();
-  const playerRows = PLAYERS.map((p, i) => `
+  const v = getVote();
+  const me = getMe();
+  const playerRows = getPlayers({ excludeSelf: true }).map((p, i) => `
     <div class="bezel anim-up-${Math.min(i + 1, 4)}" id="player-row-${p.id}"
       style="padding:14px 16px; border-radius:20px; display:flex; align-items:center; gap:12px;">
       <span style="width:36px;height:36px;border-radius:50%;background:#3f3f46;
@@ -89,8 +77,8 @@ export function render() {
       <div class="bezel anim-up-1" style="padding:14px 16px; border-radius:20px; text-align:center;">
         <p style="font-size:11px; color:#52525b; margin-bottom:6px; font-weight:600; letter-spacing:.06em">보유 투표권</p>
         <p class="num" id="votes-remaining"
-          style="font-size:32px; font-weight:800; color:#fb7185; line-height:1;">${TOTAL_VOTES}</p>
-        <p style="font-size:11px; color:#52525b; margin-top:4px">${MY_ROLE === 'double' ? '더블 역할' : '러너'}</p>
+          style="font-size:32px; font-weight:800; color:#fb7185; line-height:1;">${v.left}</p>
+        <p style="font-size:11px; color:#52525b; margin-top:4px">${ROLES[me.role].name}</p>
       </div>
       <!-- 타이머 -->
       <div class="bezel anim-up-1" style="padding:14px 16px; border-radius:20px; text-align:center;">
@@ -162,17 +150,12 @@ export function render() {
     <p style="font-size:13px; color:#a1a1aa; margin-bottom:20px;">이번 투표의 최다 득표자</p>
 
     <!-- 지목된 인물 -->
-    <div style="width:72px;height:72px;border-radius:50%;background:#3f3f46;
+    <div id="vote-result-avatar" style="width:72px;height:72px;border-radius:50%;background:#3f3f46;
       display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:12px;
-      border:2px solid rgba(251,113,133,.4); box-shadow:0 0 32px -8px rgba(251,113,133,.4);">
-      이
-    </div>
-    <p style="font-size:24px; font-weight:800; letter-spacing:-.02em; margin-bottom:6px;">${RESULT.name}</p>
-    <span style="font-size:13px; font-weight:700; color:${RESULT.teamColor};
-      background:rgba(56,189,248,.1); border:1px solid rgba(56,189,248,.25);
-      border-radius:10px; padding:4px 14px; margin-bottom:24px; display:inline-block;">
-      ${RESULT.team}
-    </span>
+      border:2px solid rgba(251,113,133,.4); box-shadow:0 0 32px -8px rgba(251,113,133,.4);"></div>
+    <p id="vote-result-name" style="font-size:24px; font-weight:800; letter-spacing:-.02em; margin-bottom:6px;"></p>
+    <span id="vote-result-team" style="font-size:13px; font-weight:700;
+      border-radius:10px; padding:4px 14px; margin-bottom:24px; display:inline-block;"></span>
 
     <!-- 페널티 카드 -->
     <div style="width:100%; background:rgba(251,113,133,.08); border:1px solid rgba(251,113,133,.2);
@@ -183,11 +166,10 @@ export function render() {
           <span style="font-size:14px;">⚡</span>
           <p style="font-size:13px; color:#e4e4e7;">이후 모든 번개 마일리지 <b style="color:#fb7185;">50% 감소</b></p>
         </div>
-        ${RESULT.isElite ? `
-        <div style="display:flex; align-items:center; gap:10px;">
+        <div id="vote-result-elite-penalty" style="display:none; align-items:center; gap:10px;">
           <span style="font-size:14px;">👑</span>
           <p style="font-size:13px; color:#e4e4e7;">엘리트 능력 <b style="color:#fb7185;">박탈</b> + 마일리지 추가 0.5× 적용</p>
-        </div>` : ''}
+        </div>
       </div>
     </div>
 
@@ -237,8 +219,7 @@ export function init() {
     timerEl.textContent = `${h}:${m}:${s}`;
   }, 1000);
 
-  // 투표 상태
-  votesLeft = TOTAL_VOTES;
+  // 투표 상태는 store가 보유
   let pendingPlayerId = null;
   let pendingPlayerName = null;
 
@@ -250,7 +231,7 @@ export function init() {
   // 지목하기 버튼들
   document.querySelectorAll('.vote-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (votesLeft <= 0) return;
+      if (getVote().left <= 0) return;
       pendingPlayerId   = btn.dataset.id;
       pendingPlayerName = btn.dataset.name;
       document.getElementById('confirm-target-name').textContent = pendingPlayerName;
@@ -271,35 +252,31 @@ export function init() {
     document.getElementById('vote-result-overlay').style.display = 'none';
   });
 
-  // 결과 시뮬레이션
-  document.getElementById('sim-result-btn').addEventListener('click', () => {
+  // 결과 시뮬레이션 → store 집계로 최다 득표자 산출
+  document.getElementById('sim-result-btn').addEventListener('click', async () => {
+    const result = await tallyVote();
+    if (result) showVoteResult(result);
     document.getElementById('vote-result-overlay').style.display = 'flex';
   });
 }
 
-// 플레이어별 지목 횟수 추적
-const voteCount = {};
-let votesLeft = 0;
-
-function castVote(playerId, playerName) {
-  votesLeft--;
-  document.getElementById('votes-remaining').textContent = votesLeft;
-
-  voteCount[playerId] = (voteCount[playerId] || 0) + 1;
+async function castVote(playerId, playerName) {
+  const v = await storeCastVote(playerId);
+  document.getElementById('votes-remaining').textContent = v.left;
 
   // 지목된 행 하이라이트 + 지목 횟수 배지
+  const cnt = v.castCount[playerId] || 0;
   const row = document.getElementById(`player-row-${playerId}`);
   if (row) {
     row.style.background = 'rgba(251,113,133,.08)';
     row.style.border = '1px solid rgba(251,113,133,.25)';
     const btn = row.querySelector('.vote-btn');
-    if (btn && votesLeft > 0) {
-      // 투표권이 남아있으면 재지목 가능 — 버튼은 활성 유지
-      btn.textContent = voteCount[playerId] > 1 ? `지목됨 ×${voteCount[playerId]}` : '지목됨';
+    if (btn && v.left > 0) {
+      btn.textContent = cnt > 1 ? `지목됨 ×${cnt}` : '지목됨';
     }
   }
 
-  if (votesLeft <= 0) {
+  if (v.left <= 0) {
     // 모든 버튼 비활성화
     document.querySelectorAll('.vote-btn').forEach(b => {
       const pid = b.dataset.id;
@@ -307,12 +284,25 @@ function castVote(playerId, playerName) {
       b.style.borderColor = 'rgba(255,255,255,.06)';
       b.style.color = '#3f3f46';
       b.style.pointerEvents = 'none';
-      const cnt = voteCount[pid] || 0;
-      b.textContent = cnt > 1 ? `지목됨 ×${cnt}` : cnt === 1 ? '지목됨' : '마감';
+      const c = v.castCount[pid] || 0;
+      b.textContent = c > 1 ? `지목됨 ×${c}` : c === 1 ? '지목됨' : '마감';
     });
     document.getElementById('vote-done-msg').style.display = 'block';
     document.getElementById('sim-result-btn').style.display = 'block';
   }
+}
+
+// 집계 결과로 결과 오버레이 채우기
+function showVoteResult(r) {
+  const t = TEAM_META[r.team];
+  document.getElementById('vote-result-avatar').textContent = r.name[0];
+  document.getElementById('vote-result-name').textContent   = r.name;
+  const teamEl = document.getElementById('vote-result-team');
+  teamEl.textContent      = t.label;
+  teamEl.style.color      = t.color;
+  teamEl.style.background  = t.bg;
+  teamEl.style.border      = `1px solid ${t.border}`;
+  document.getElementById('vote-result-elite-penalty').style.display = r.isElite ? 'flex' : 'none';
 }
 
 function openConfirmSheet() {
