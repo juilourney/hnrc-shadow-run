@@ -5,9 +5,10 @@
 * { word-break: keep-all; -webkit-tap-highlight-color: transparent; }
 html {
   background: var(--ink);
-  /* 문서 스크롤러에 직접 snap — 고정 컨테이너 없이 섹션 안착 (검은 띠 X) */
-  /* 스냅은 JS(smart-snap)가 제어 — CSS 스냅은 긴 guide를 끌어당겨서 끔 */
-  scroll-snap-type: none;
+  /* 슬라이드가 각 섹션에 확실히 걸림 (한 번에 한 섹션, 통과 불가) */
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: 0;
+  scroll-behavior: smooth; /* 스냅이 순간이동하지 않고 부드럽게 붙음 */
 }
 body {
   font-family: 'Pretendard', system-ui, sans-serif;
@@ -72,12 +73,19 @@ body {
   display: block;
 }
 .game-section {
-  min-height: 100dvh; /* 한 화면 이상 — 콘텐츠 길면 자연 확장 */
+  height: 100dvh;              /* 정확히 한 화면 = 스냅 단위 */
+  scroll-snap-align: start;    /* 섹션 시작(제목)에 걸림 */
+  scroll-snap-stop: always;    /* 한 번 슬라이드 = 한 섹션 (통과 불가) */
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 .game-section .scroll-body {
-  flex: none;
-  overflow: visible; /* 자체 스크롤 X — 문서가 자연 스크롤 */
+  flex: 1;
+  overflow-y: auto;            /* 긴 섹션(가이드)은 내부에서 스크롤 → 안 갇힘 */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto; /* 내부 끝에서 위/아래 섹션으로 스크롤 이어짐 (기본 contain 해제) */
 }
 
 /* ── 게임 섹션 orb 배경 (name 화면과 동일 스타일) ── */

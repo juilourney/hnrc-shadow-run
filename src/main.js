@@ -1,7 +1,6 @@
 import { createTabbar }   from './components/tabbar.js';
 import { createEdgeBlur } from './components/edge-blur.js';
 import { goToScreen, syncTabbarOnScroll } from './utils/nav.js';
-import { initSmartSnap } from './utils/snap.js';
 
 import * as name       from './screens/name.js';
 import * as card       from './screens/card.js';
@@ -65,9 +64,6 @@ SECTION_IDS.forEach(id => {
   const el = document.getElementById(id);
   if (el) gameObserver.observe(el);
 });
-
-// 스마트 스냅 (1화면 섹션 firm, 긴 섹션 자유)
-initSmartSnap();
 
 // 개발: 인트로 스킵 — 게임 화면 바로 진입
 goToScreen('s-game');
