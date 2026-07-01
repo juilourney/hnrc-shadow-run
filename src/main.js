@@ -65,5 +65,36 @@ SECTION_IDS.forEach(id => {
   if (el) gameObserver.observe(el);
 });
 
+// iOS WebKit에서 내부 scroll-body 가 상단/하단 경계에 닿았을 때
+// 외부 scroll-snap으로 touch가 전파되지 않는 문제를 JS로 보완
+document.querySelectorAll('.game-section .scroll-body').forEach(body => {
+  const section = body.closest('.game-section');
+  let startY = 0;
+  let chaining = false;
+
+  body.addEventListener('touchstart', e => {
+    startY = e.touches[0].clientY;
+    chaining = false;
+  }, { passive: true });
+
+  body.addEventListener('touchmove', e => {
+    if (chaining) return;
+    const dy = e.touches[0].clientY - startY;
+    const idx = SECTION_IDS.indexOf(section.id);
+    if (idx === -1) return;
+
+    const atTop    = body.scrollTop <= 0;
+    const atBottom = body.scrollHeight - body.scrollTop <= body.clientHeight + 2;
+
+    if (atTop && dy > 8 && idx > 0) {
+      chaining = true;
+      document.getElementById(SECTION_IDS[idx - 1])?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (atBottom && dy < -8 && idx < SECTION_IDS.length - 1) {
+      chaining = true;
+      document.getElementById(SECTION_IDS[idx + 1])?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, { passive: true });
+});
+
 // 개발: 인트로 스킵 — 게임 화면 바로 진입
 goToScreen('s-game');
