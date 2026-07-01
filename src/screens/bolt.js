@@ -221,12 +221,12 @@ export function init() {
     showToast('이미 잠긴 번개입니다.');
   });
 
-  document.getElementById('bolt-join-backdrop').addEventListener('click', closeJoinOverlay);
-  document.getElementById('join-cancel-btn').addEventListener('click', closeJoinOverlay);
+  document.getElementById('bolt-join-backdrop').addEventListener('click', () => { closeJoinOverlay(); showSidebar(); });
+  document.getElementById('join-cancel-btn').addEventListener('click',   () => { closeJoinOverlay(); showSidebar(); });
   document.getElementById('join-confirm-btn').addEventListener('click', () => {
     joinedBoltId = selectedBolt.id;
     markJoined(joinedBoltId);
-    closeJoinOverlay();
+    closeJoinOverlay(); // sidebar는 goToScreen('s-bolt-join')이 숨김 처리
     setTimeout(() => goToScreen('s-bolt-join'), 300);
   });
 
@@ -254,6 +254,7 @@ function openCreateOverlay() {
   const sheet   = document.getElementById('bolt-create-sheet');
   overlay.style.display = 'block';
   document.documentElement.style.overflow = 'hidden';
+  hideSidebar();
   requestAnimationFrame(() => requestAnimationFrame(() => {
     sheet.style.transform = 'translateX(0)';
   }));
@@ -263,6 +264,7 @@ function closeCreateOverlay() {
   const sheet = document.getElementById('bolt-create-sheet');
   sheet.style.transform = 'translateX(100%)';
   document.documentElement.style.overflow = '';
+  showSidebar();
   setTimeout(() => { document.getElementById('bolt-create-overlay').style.display = 'none'; }, 400);
 }
 
@@ -272,6 +274,7 @@ function openJoinOverlay(bolt) {
   document.getElementById('join-bolt-title').textContent = bolt.title;
   document.getElementById('join-bolt-info').textContent  = `${bolt.place} · ${bolt.distance}km · ${bolt.pace}`;
   overlay.style.display = 'flex';
+  hideSidebar();
   requestAnimationFrame(() => requestAnimationFrame(() => {
     sheet.style.transform = 'translateY(0)';
   }));
@@ -281,6 +284,20 @@ function closeJoinOverlay() {
   const sheet = document.getElementById('bolt-join-sheet');
   sheet.style.transform = 'translateY(100%)';
   setTimeout(() => { document.getElementById('bolt-join-overlay').style.display = 'none'; }, 400);
+}
+
+function hideSidebar() {
+  const tb     = document.getElementById('global-tabbar');
+  const handle = document.getElementById('tabbar-handle');
+  if (tb)     tb.style.display = 'none';
+  if (handle) handle.style.display = 'none';
+}
+
+function showSidebar() {
+  const tb     = document.getElementById('global-tabbar');
+  const handle = document.getElementById('tabbar-handle');
+  if (tb)     tb.style.display = 'flex';
+  if (handle) handle.style.display = 'flex';
 }
 
 function showToast(msg) {
