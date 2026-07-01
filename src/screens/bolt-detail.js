@@ -1,4 +1,13 @@
 import { goToScreen } from '../utils/nav.js';
+import { getBolts, completeBolt } from '../store.js';
+
+// 방장이 운영하는 번개 (프로토타입 — 한강 새벽 LSD)
+const HOST_BOLT_ID = 'b1';
+// 체크박스 → store 참가자 id 매핑
+const CHECK_MAP = { 'check-me': 'm0', 'check-minsu': 'm1', 'check-hyunwoo': 'm2' };
+
+let targetKm   = 8;    // 번개 생성 시 설정 거리 (이 이상 달려야 인증)
+let verifiedKm = null; // 인식/입력된 인증 거리
 
 export function render() {
   return `
@@ -94,12 +103,14 @@ export function render() {
         </label>
       </div>
 
-      <div style="margin-top:16px; padding:14px 16px; background:rgba(255,255,255,.03); border-radius:14px;">
-        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px; color:#71717a;">
-          <input type="number" id="total-km-input" value="8.2" step="0.1" min="0"
-            style="width:60px; padding:6px 10px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fafafa; font-family:'Space Grotesk'; font-size:15px; font-weight:700; text-align:center;" />
-          <span>km 완주 (실제 거리 입력)</span>
-        </label>
+      <!-- 방장 거리 인증 (기록 사진 업로드 → AI 인식) -->
+      <div style="margin-top:22px;">
+        <p style="font-size:14px; font-weight:700; margin-bottom:6px;">방장 거리 인증</p>
+        <p style="font-size:12px; color:#52525b; margin-bottom:12px;">
+          설정 거리 <b id="verify-target" style="color:var(--accent);">8.0km</b> 이상 달린 기록 사진을 올려주세요.
+          인식된 거리가 방장·참가자 전원에게 적용됩니다.
+        </p>
+        <div id="verify-zone"></div>
       </div>
     </div>
   </div>
@@ -116,17 +127,29 @@ export function init() {
   document.getElementById('bolt-detail-back').addEventListener('click', () => goToScreen('gs-bolt'));
   document.getElementById('bolt-detail-cancel').addEventListener('click', () => goToScreen('gs-bolt'));
 
+  // 설정 거리를 store에서 읽어옴
+  targetKm = getBolts().find(b => b.id === HOST_BOLT_ID)?.distance ?? 8;
+
   let started = false;
-  document.getElementById('bolt-detail-action').addEventListener('click', () => {
+  document.getElementById('bolt-detail-action').addEventListener('click', async () => {
     if (!started) {
       // 번개 시작 → 체크리스트 뷰로 전환
       started = true;
+      verifiedKm = null;
       document.getElementById('bolt-detail-waiting').style.display = 'none';
       document.getElementById('bolt-detail-checklist').style.display = 'block';
       document.getElementById('bolt-detail-action').textContent = '번개 완료 · 제출';
       document.getElementById('bolt-detail-cancel').style.display = 'none';
+      document.getElementById('verify-target').textContent = `${targetKm.toFixed(1)}km`;
+      renderVerifyIdle();
+      updateSubmitState();
     } else {
-      // 제출 → 버프 카드 화면
+      // 제출: 인증 확인 → store에 마일리지 반영
+      if (verifiedKm === null || verifiedKm < targetKm) return;
+      const checked = Object.entries(CHECK_MAP)
+        .filter(([elId]) => document.getElementById(elId)?.checked)
+        .map(([, pid]) => pid);
+      await completeBolt(HOST_BOLT_ID, verifiedKm, checked);
       goToScreen('s-bolt-buff');
     }
   });
@@ -144,4 +167,148 @@ export function init() {
       dot.style.background = '#fff';
     }
   });
+}
+
+// ── 제출 버튼 활성/비활성 ────────────────────────────────
+function updateSubmitState() {
+  const btn = document.getElementById('bolt-detail-action');
+  if (!btn) return;
+  const ok = verifiedKm !== null && verifiedKm >= targetKm;
+  btn.style.opacity       = ok ? '1' : '.5';
+  btn.style.pointerEvents = ok ? 'auto' : 'none';
+}
+
+// ── 인증 존 상태별 렌더 ──────────────────────────────────
+function renderVerifyIdle() {
+  const zone = document.getElementById('verify-zone');
+  zone.innerHTML = `
+    <button id="verify-upload-btn" type="button"
+      style="width:100%; height:52px; border-radius:16px; cursor:pointer;
+        background:var(--accent-tint); border:1px solid var(--accent-border); color:var(--accent);
+        font-size:14px; font-weight:700;">📸 거리 기록 사진 올리기</button>
+    <input type="file" id="verify-file" accept="image/*" style="display:none" />`;
+  zone.querySelector('#verify-upload-btn').onclick = () => zone.querySelector('#verify-file').click();
+  zone.querySelector('#verify-file').onchange = e => { const f = e.target.files[0]; if (f) handleUpload(f); };
+}
+
+function showAnalyzing() {
+  ensureSpinKeyframe();
+  document.getElementById('verify-zone').innerHTML = `
+    <div style="display:flex; align-items:center; gap:12px; padding:16px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:16px;">
+      <div style="width:20px; height:20px; border:2px solid rgba(255,255,255,.15); border-top-color:var(--accent); border-radius:50%; animation:verify-spin .8s linear infinite;"></div>
+      <p style="font-size:13px; color:#a1a1aa;">AI가 거리를 분석하고 있어요…</p>
+    </div>`;
+}
+
+function showResult(km) {
+  const ok = km >= targetKm;
+  verifiedKm = ok ? km : null;
+  const zone = document.getElementById('verify-zone');
+  zone.innerHTML = `
+    <div style="padding:16px; border-radius:16px;
+      background:${ok ? 'rgba(52,211,153,.08)' : 'rgba(251,113,133,.08)'};
+      border:1px solid ${ok ? 'rgba(52,211,153,.25)' : 'rgba(251,113,133,.25)'};">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div>
+          <p style="font-size:12px; color:#52525b;">인식된 거리</p>
+          <p class="num" style="font-size:26px; font-weight:800; color:${ok ? '#34d399' : '#fb7185'};">
+            ${km.toFixed(2)}<span style="font-size:13px; font-weight:400;"> km</span></p>
+        </div>
+        <span style="font-size:13px; font-weight:700; text-align:right; color:${ok ? '#34d399' : '#fb7185'};">
+          ${ok ? '✅ 인증 완료' : `❌ ${targetKm.toFixed(1)}km 미달`}</span>
+      </div>
+      <button id="verify-retry" type="button"
+        style="margin-top:12px; width:100%; height:40px; border-radius:12px;
+          background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+          color:#a1a1aa; font-size:13px; cursor:pointer;">다시 올리기</button>
+    </div>`;
+  zone.querySelector('#verify-retry').onclick = renderVerifyIdle;
+  updateSubmitState();
+}
+
+// 자동 인식 불가(로컬/실패) 시 수동 입력 폴백
+function showManualFallback() {
+  const zone = document.getElementById('verify-zone');
+  zone.innerHTML = `
+    <div style="padding:16px; border-radius:16px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);">
+      <p style="font-size:13px; color:#fb7185; font-weight:600; margin-bottom:4px;">자동 인식을 사용할 수 없습니다</p>
+      <p style="font-size:12px; color:#52525b; margin-bottom:12px;">거리를 직접 입력하세요 (사진은 기록으로 보관됩니다)</p>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <input type="number" id="manual-km" step="0.1" min="0" placeholder="0.0"
+          style="width:90px; padding:8px 12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fafafa; font-family:'Space Grotesk'; font-size:16px; font-weight:700; text-align:center;" />
+        <span style="font-size:13px; color:#71717a;">km</span>
+        <button id="manual-ok" type="button"
+          style="margin-left:auto; height:40px; padding:0 18px; border-radius:12px;
+            background:var(--accent-tint); border:1px solid var(--accent-border); color:var(--accent);
+            font-size:13px; font-weight:700; cursor:pointer;">확인</button>
+      </div>
+    </div>`;
+  zone.querySelector('#manual-ok').onclick = () => {
+    const v = parseFloat(zone.querySelector('#manual-km').value);
+    if (isNaN(v) || v <= 0) return;
+    showResult(v);
+  };
+}
+
+// ── 업로드 + AI 인식 (runluck 방식) ──────────────────────
+async function handleUpload(file) {
+  showAnalyzing();
+  const small = await resizeImage(file, 600, 0.65);
+  if (!small) { showManualFallback(); return; }
+  const km = await recognizeDistance(small);
+  if (km === null) { showManualFallback(); return; }
+  showResult(km);
+}
+
+function resizeImage(file, max, q) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      let { width: w, height: h } = img;
+      const sc = Math.min(1, max / Math.max(w, h));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(w * sc); cv.height = Math.round(h * sc);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      res(cv.toDataURL('image/jpeg', q));
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => res(null);
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+async function recognizeDistance(dataUrl) {
+  const b64   = dataUrl.split(',')[1];
+  const media = dataUrl.slice(5, dataUrl.indexOf(';'));
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), 20000);
+  try {
+    const res = await fetch('/api/recognize', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ imageData: b64, mediaType: media }),
+      signal: abort.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const txt = (data.content?.[0]?.text ?? '').trim();
+    if (/NONE/i.test(txt)) return null;
+    const m = txt.match(/(\d+(?:\.\d+)?)/);
+    if (!m) return null;
+    const v = parseFloat(m[1]);
+    if (isNaN(v) || v <= 0 || v > 200) return null;
+    return Math.round(v * 100) / 100;
+  } catch {
+    clearTimeout(timer);
+    return null;
+  }
+}
+
+function ensureSpinKeyframe() {
+  if (document.getElementById('verify-spin-kf')) return;
+  const s = document.createElement('style');
+  s.id = 'verify-spin-kf';
+  s.textContent = '@keyframes verify-spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(s);
 }

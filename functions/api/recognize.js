@@ -1,0 +1,49 @@
+// Cloudflare Pages Function — 러닝 앱 스크린샷에서 '총 달린 거리(km)'를 Claude 비전으로 인식
+// runluck 프로젝트의 동일 방식 이식. ANTHROPIC_API_KEY 환경변수 필요.
+export async function onRequestPost(context) {
+  try {
+    const { imageData, mediaType } = await context.request.json();
+    if (!imageData || !mediaType) {
+      return new Response(JSON.stringify({ error: 'missing imageData or mediaType' }), {
+        status: 400, headers: { 'content-type': 'application/json' }
+      });
+    }
+
+    const apiKey = context.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: 'API key not configured' }), {
+        status: 500, headers: { 'content-type': 'application/json' }
+      });
+    }
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 20,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageData } },
+            { type: 'text', text: '이건 러닝/운동 앱 스크린샷이야. 화면에 표시된 "총 달린 거리"를 킬로미터 숫자만 반환해. 예: 5.27 또는 10.3 . 마일이면 km로 환산해. 거리를 못 찾으면 정확히 NONE 이라고만 반환해. 다른 말은 절대 쓰지 마.' }
+          ]
+        }]
+      })
+    });
+
+    const data = await res.json();
+    return new Response(JSON.stringify(data), {
+      status: res.status,
+      headers: { 'content-type': 'application/json' }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500, headers: { 'content-type': 'application/json' }
+    });
+  }
+}
