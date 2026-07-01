@@ -192,7 +192,10 @@ export function render() {
 }
 
 export function init() {
-  document.getElementById('bolt-create-btn').addEventListener('click', openCreateOverlay);
+  document.getElementById('bolt-create-btn').addEventListener('click', () => {
+    if (joinedBoltId) { showToast('참여 중인 번개가 있으면 새 번개를 만들 수 없습니다'); return; }
+    openCreateOverlay();
+  });
   document.getElementById('bolt-create-close').addEventListener('click', closeCreateOverlay);
 
   document.getElementById('create-submit-btn').addEventListener('click', () => {
