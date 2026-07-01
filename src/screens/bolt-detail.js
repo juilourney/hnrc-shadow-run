@@ -212,7 +212,7 @@ function showResult(km) {
         <div>
           <p style="font-size:12px; color:#52525b;">인식된 거리</p>
           <p class="num" style="font-size:26px; font-weight:800; color:${ok ? '#34d399' : '#fb7185'};">
-            ${km.toFixed(2)}<span style="font-size:13px; font-weight:400;"> km</span></p>
+            ${km.toFixed(1)}<span style="font-size:13px; font-weight:400;"> km</span></p>
         </div>
         <span style="font-size:13px; font-weight:700; text-align:right; color:${ok ? '#34d399' : '#fb7185'};">
           ${ok ? '✅ 인증 완료' : `❌ ${targetKm.toFixed(1)}km 미달`}</span>

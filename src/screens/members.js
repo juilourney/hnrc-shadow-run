@@ -202,7 +202,7 @@ function renderList() {
           color:${m.isSelf ? 'var(--accent)' : '#e4e4e7'};">${m.name}${m.isSelf ? ' (나)' : ''}</span>
         ${publicBadge}${privateBadge}
       </div>
-      <p class="num" style="font-size:13px; font-weight:600; color:#52525b; flex-shrink:0;">${m.km} km</p>
+      <p class="num" style="font-size:13px; font-weight:600; color:#52525b; flex-shrink:0;">${m.km.toFixed(1)} km</p>
     </div>`;
   }).join('');
 

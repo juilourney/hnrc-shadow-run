@@ -1,7 +1,7 @@
 import { goToScreen } from '../utils/nav.js';
 import { subscribe, getGauge, getMe } from '../store.js';
 
-const fmt = n => Math.round(n).toLocaleString('en-US');
+const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export function render() {
   return `

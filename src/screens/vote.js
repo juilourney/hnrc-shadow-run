@@ -50,7 +50,7 @@ export function render() {
       </span>
       <div style="flex:1; min-width:0">
         <p style="font-size:15px; font-weight:600">${p.name}</p>
-        <p class="num" style="font-size:11px; color:#52525b; margin-top:2px">${p.km} km</p>
+        <p class="num" style="font-size:11px; color:#52525b; margin-top:2px">${p.km.toFixed(1)} km</p>
       </div>
       <button class="vote-btn" data-id="${p.id}" data-name="${p.name}"
         style="background:rgba(251,113,133,.12); border:1px solid rgba(251,113,133,.3);
