@@ -271,7 +271,9 @@ export async function completeBolt(boltId, distanceKm, participantIds) {
       if (p.role === 'anchor') subtractOpponent(p.team, distanceKm);
     }
 
-    // 개인 순수 기여 누적 (보너스 제외한 실제 거리)
+    // 개인 순수 누적거리 (보너스 제외한 실제 거리)
+    // 방장이 출석 체크한 참가자는 함께 달린 것으로 보고 방장이 달린 거리를 동일 적용
+    p.km += distanceKm;
     if (pid === state.me.id) {
       state.me.pureKm += distanceKm;
       state.me.boltsCompleted += 1;
