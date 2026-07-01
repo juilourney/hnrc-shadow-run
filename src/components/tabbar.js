@@ -47,7 +47,7 @@ export function createTabbar(mount) {
     tab.addEventListener('click', e => {
       e.stopPropagation();
       scrollToSection(TAB_SECTION_MAP[tab.dataset.tab]);
-      setTimeout(close, 850);
+      setTimeout(close, 1800);
     });
   });
 

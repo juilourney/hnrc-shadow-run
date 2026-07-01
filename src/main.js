@@ -1,6 +1,6 @@
 import { createTabbar }   from './components/tabbar.js';
 import { createEdgeBlur } from './components/edge-blur.js';
-import { goToScreen, syncTabbarOnScroll } from './utils/nav.js';
+import { goToScreen, syncTabbarOnScroll, isProgrammaticScroll } from './utils/nav.js';
 
 import * as name       from './screens/name.js';
 import * as card       from './screens/card.js';
@@ -54,7 +54,7 @@ createEdgeBlur(app);
 const SECTION_IDS = ['gs-dash', 'gs-bolt', 'gs-vote', 'gs-members', 'gs-guide'];
 const gameObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+    if (entry.isIntersecting && entry.intersectionRatio >= 0.5 && !isProgrammaticScroll()) {
       syncTabbarOnScroll(entry.target.id);
     }
   });

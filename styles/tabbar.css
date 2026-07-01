@@ -155,14 +155,22 @@
 [class^="ti-"] {
   display: block; position: relative; margin: 0 auto; color: inherit;
 }
-.ti-home-dot { width: 14px; height: 14px; background: currentColor; border-radius: 3px; }
+/* 홈: 집 모양 */
+.ti-home-dot {
+  width: 16px; height: 15px; background: currentColor;
+  clip-path: polygon(50% 0%, 100% 44%, 86% 44%, 86% 100%, 61% 100%, 61% 65%, 39% 65%, 39% 100%, 14% 100%, 14% 44%, 0% 44%);
+}
+/* 번개 */
 .ti-bolt {
   width: 10px; height: 17px; background: currentColor;
   clip-path: polygon(68% 0%, 18% 52%, 52% 48%, 32% 100%, 82% 48%, 48% 52%);
 }
+/* 투표: 체크마크 */
 .ti-vote {
-  width: 14px; height: 14px; border: 2px solid currentColor; border-radius: 50%;
+  width: 16px; height: 12px; background: currentColor;
+  clip-path: polygon(0% 52%, 13% 38%, 37% 65%, 87% 6%, 100% 19%, 37% 90%);
 }
+/* 참가자: 인물 실루엣 */
 .ti-users { width: 18px; height: 16px; }
 .ti-users::before {
   content: ''; display: block;
@@ -173,6 +181,7 @@
   width: 15px; height: 6px; background: currentColor; border-radius: 4px 4px 0 0;
   margin: 2px auto 0;
 }
+/* 가이드: 책 */
 .ti-book {
   width: 14px; height: 17px; background: currentColor;
   border-radius: 1px 3px 3px 1px; box-shadow: -3px 0 0 currentColor;

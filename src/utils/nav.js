@@ -1,4 +1,7 @@
 let currentScreen = 's-name';
+let _programmaticScroll = false;
+
+export function isProgrammaticScroll() { return _programmaticScroll; }
 
 const SECTION_TAB = {
   'gs-dash': 'home', 'gs-bolt': 'bolt', 'gs-vote': 'vote',
@@ -41,6 +44,10 @@ export function scrollToSection(gsId) {
   const gameWrap = document.getElementById('s-game');
   const enter    = !gameWrap.classList.contains('active');
 
+  _programmaticScroll = true;
+  clearTimeout(_scrollTimer);
+  _scrollTimer = setTimeout(() => { _programmaticScroll = false; }, 800);
+
   if (enter) {
     goToScreen('s-game');
     setTimeout(() => {
@@ -52,6 +59,8 @@ export function scrollToSection(gsId) {
     setActiveTab(SECTION_TAB[gsId] || 'home');
   }
 }
+
+let _scrollTimer = null;
 
 export function setActiveTab(tabName) {
   const tb = document.getElementById('global-tabbar');
