@@ -127,8 +127,8 @@ export function getMe() {
 }
 
 export function getPlayers({ excludeSelf = false } = {}) {
-  const list = state.players.map(p => ({ ...p }));
-  return excludeSelf ? list.filter(p => p.id !== state.me.id) : list;
+  const list = state.players.map(p => ({ ...p, isSelf: p.id === state.me.id }));
+  return excludeSelf ? list.filter(p => !p.isSelf) : list;
 }
 
 export function getBolts() {

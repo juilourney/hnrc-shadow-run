@@ -1,8 +1,5 @@
 import { goToScreen } from '../utils/nav.js';
-
-// 프로토타입 설정 — 실제 앱에서는 Firebase에서 읽어옴
-const MY_ROLE = 'detective'; // 'runner' | 'detective' | 'spy'
-const ABILITY_LIMIT = 3;
+import { subscribe, getPlayers, getAbility, useAbility } from '../store.js';
 
 const TEAM_META = {
   pacer: { label: '페이서', color: '#38bdf8', bg: 'rgba(56,189,248,.12)', border: 'rgba(56,189,248,.3)' },
@@ -18,28 +15,18 @@ const ROLE_META = {
   spy:       { label: '밀정',   icon: '🕵️', color: '#c084fc' },
 };
 
-// publicTeam: 투표로 밝혀진 팀 (모두에게 공개)
-// secretTeam / secretRole: 능력으로 알 수 있는 실제 값 (프로토타입용)
-export const MEMBERS = [
-  { id: 'm0', name: '나',    isSelf: true,  km: 38.2, publicTeam: null,    secretTeam: 'pacer', secretRole: 'detective' },
-  { id: 'm1', name: '김민수', isSelf: false, km: 42.3, publicTeam: 'pacer', secretTeam: 'pacer', secretRole: 'elite' },
-  { id: 'm2', name: '박현우', isSelf: false, km: 38.7, publicTeam: null,    secretTeam: 'ghost', secretRole: 'runner' },
-  { id: 'm3', name: '이서연', isSelf: false, km: 51.2, publicTeam: null,    secretTeam: 'ghost', secretRole: 'double' },
-  { id: 'm4', name: '정윤아', isSelf: false, km: 44.1, publicTeam: null,    secretTeam: 'pacer', secretRole: 'anchor' },
-  { id: 'm5', name: '최준호', isSelf: false, km: 29.8, publicTeam: null,    secretTeam: 'ghost', secretRole: 'spy' },
-  { id: 'm6', name: '한지우', isSelf: false, km: 33.5, publicTeam: null,    secretTeam: 'pacer', secretRole: 'runner' },
-];
+// waiting.js 등 다른 화면 호환용 — store에서 파생 (단일 출처 유지)
+export const MEMBERS = getPlayers();
 
-let sortMode    = 'name';
-let abilityUsed = 0;
-let revealed    = {}; // { memberId: { team } } or { memberId: { role } }
-let pendingId   = null;
+let sortMode  = 'name';
+let pendingId = null;
 
 export function render() {
-  const isSpecial = MY_ROLE === 'detective' || MY_ROLE === 'spy';
-  const abilityLabel = MY_ROLE === 'detective'
-    ? `🔍 팀 확인 남은 횟수: ${ABILITY_LIMIT} / ${ABILITY_LIMIT}회`
-    : `🕵️ 역할 확인 남은 횟수: ${ABILITY_LIMIT} / ${ABILITY_LIMIT}회`;
+  const ab = getAbility();
+  const isSpecial = ab.isSpecial;
+  const abilityLabel = ab.kind === 'team'
+    ? `🔍 팀 확인 남은 횟수: ${ab.left} / ${ab.limit}회`
+    : `🕵️ 역할 확인 남은 횟수: ${ab.left} / ${ab.limit}회`;
 
   return `
 <div class="game-section" id="gs-members">
@@ -51,7 +38,7 @@ export function render() {
     <div class="anim-up" style="margin-bottom:14px; display:flex; align-items:center; justify-content:space-between">
       <div>
         <h2 style="font-size:22px; font-weight:700; letter-spacing:-.02em">참가자</h2>
-        <p style="font-size:12px; color:#52525b; margin-top:2px">${MEMBERS.filter(m => !m.isSelf).length}명 참가 중</p>
+        <p style="font-size:12px; color:#52525b; margin-top:2px">${getPlayers({ excludeSelf: true }).length}명 참가 중</p>
       </div>
       <!-- 정렬 토글 -->
       <button id="sort-toggle"
@@ -87,7 +74,7 @@ export function render() {
         <div style="width:36px; height:4px; border-radius:99px; background:rgba(255,255,255,.15);"></div>
       </div>
       <p style="font-size:11px; color:#52525b; letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin-bottom:8px;">
-        ${MY_ROLE === 'detective' ? '탐정 능력' : '밀정 능력'}
+        ${getAbility().kind === 'team' ? '탐정 능력' : '밀정 능력'}
       </p>
       <h3 id="ability-confirm-title" style="font-size:19px; font-weight:700; margin-bottom:6px;"></h3>
       <p id="ability-confirm-sub" style="font-size:13px; color:#52525b; margin-bottom:22px;"></p>
@@ -144,14 +131,14 @@ export function init() {
   document.getElementById('result-ok-btn').addEventListener('click', () => {
     closeResult();
     renderList();
-    updateAbilityBar();
   });
 
   renderList();
+  subscribe(renderList);
 }
 
 function getSortedMembers() {
-  const list = MEMBERS.filter(m => !m.isSelf);
+  const list = getPlayers({ excludeSelf: true });
   if (sortMode === 'name') {
     list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
   } else {
@@ -162,8 +149,11 @@ function getSortedMembers() {
 
 function renderList() {
   const sorted = getSortedMembers();
-  const isSpecial = MY_ROLE === 'detective' || MY_ROLE === 'spy';
-  const canUse = isSpecial && abilityUsed < ABILITY_LIMIT;
+  const ab = getAbility();
+  const isSpecial = ab.isSpecial;
+  const canUse = isSpecial && ab.left > 0;
+  const revealed = ab.revealed;
+  updateAbilityBar();
 
   const html = sorted.map(m => {
     // 공개 팀 배지 (투표로 밝혀진 것 — 전체 공개)
@@ -235,9 +225,9 @@ function renderList() {
 }
 
 function showAlreadyRevealedPopup(id) {
-  const member = MEMBERS.find(m => m.id === id);
+  const member = getPlayers().find(m => m.id === id);
   if (!member) return;
-  const r = revealed[id];
+  const r = getAbility().revealed[id];
   let msg = '이미 확인된 참가자입니다';
   if (r.team) {
     const t = TEAM_META[r.team];
@@ -266,10 +256,10 @@ function showInfoToast(msg) {
 function updateAbilityBar() {
   const bar = document.getElementById('ability-label');
   if (!bar) return;
-  const remaining = ABILITY_LIMIT - abilityUsed;
-  const type = MY_ROLE === 'detective' ? '🔍 팀 확인' : '🕵️ 역할 확인';
-  bar.textContent = `${type} 남은 횟수: ${remaining} / ${ABILITY_LIMIT}회`;
-  if (remaining === 0) {
+  const ab = getAbility();
+  const type = ab.kind === 'team' ? '🔍 팀 확인' : '🕵️ 역할 확인';
+  bar.textContent = `${type} 남은 횟수: ${ab.left} / ${ab.limit}회`;
+  if (ab.left === 0) {
     document.getElementById('ability-bar').style.background = 'rgba(255,255,255,.03)';
     document.getElementById('ability-bar').style.borderColor = 'rgba(255,255,255,.06)';
     bar.style.color = '#52525b';
@@ -277,8 +267,9 @@ function updateAbilityBar() {
 }
 
 function openConfirm(id, name) {
-  const remaining = ABILITY_LIMIT - abilityUsed;
-  const isDetective = MY_ROLE === 'detective';
+  const ab = getAbility();
+  const remaining = ab.left;
+  const isDetective = ab.kind === 'team';
   document.getElementById('ability-confirm-title').textContent =
     isDetective ? `${name}님의 팀을 확인하시겠습니까?` : `${name}님의 역할을 확인하시겠습니까?`;
   document.getElementById('ability-confirm-sub').textContent =
@@ -298,15 +289,14 @@ function closeConfirm() {
   setTimeout(() => { document.getElementById('ability-confirm-overlay').style.display = 'none'; }, 380);
 }
 
-function showResult(id) {
-  const member = MEMBERS.find(m => m.id === id);
+async function showResult(id) {
+  const member = getPlayers().find(m => m.id === id);
   if (!member) return;
 
-  abilityUsed++;
+  const result = await useAbility(id); // { team } 또는 { role }
 
-  if (MY_ROLE === 'detective') {
-    revealed[id] = { team: member.secretTeam };
-    const t = TEAM_META[member.secretTeam];
+  if (result.team) {
+    const t = TEAM_META[result.team];
     document.getElementById('result-badge').innerHTML =
       `<span style="font-size:18px">🔍</span>
        <span style="font-size:14px; font-weight:700; color:${t.color};">${t.label}</span>`;
@@ -316,8 +306,7 @@ function showResult(id) {
       `<span style="color:${t.color}">${member.name}</span>님은 <span style="color:${t.color}; font-weight:800;">${t.label}</span>입니다!`;
     document.getElementById('result-sub').textContent = '이 정보는 나의 화면에서만 확인됩니다';
   } else {
-    revealed[id] = { role: member.secretRole };
-    const ro = ROLE_META[member.secretRole];
+    const ro = ROLE_META[result.role];
     document.getElementById('result-badge').innerHTML =
       `<span style="font-size:18px">${ro.icon}</span>
        <span style="font-size:14px; font-weight:700; color:${ro.color};">${ro.label}</span>`;
