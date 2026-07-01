@@ -52,7 +52,7 @@ function boltCard(bolt, animClass) {
       <p style="font-size:15px; font-weight:600; line-height:1.3">${lockedPrefix}${bolt.title}</p>
       <span class="num" style="font-size:13px; font-weight:600; color:#71717a; white-space:nowrap; flex-shrink:0; margin-top:1px">${bolt.time}</span>
     </div>
-    <p style="font-size:12px; color:#52525b; margin-top:5px">${bolt.place} · ${bolt.distance}km · ${bolt.pace}</p>
+    <p style="font-size:12px; color:#52525b; margin-top:5px">${bolt.place} · ${bolt.distance.toFixed(1)}km · ${bolt.pace}</p>
     <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px">
       <p style="font-size:12px; color:#52525b">방장 · ${bolt.host}</p>
       <div style="display:flex; align-items:center; gap:8px">
@@ -337,7 +337,7 @@ function openJoinOverlay(bolt) {
   const overlay = document.getElementById('bolt-join-overlay');
   const sheet   = document.getElementById('bolt-join-sheet');
   document.getElementById('join-bolt-title').textContent = bolt.title;
-  document.getElementById('join-bolt-info').textContent  = `${bolt.place} · ${bolt.distance}km · ${bolt.pace}`;
+  document.getElementById('join-bolt-info').textContent  = `${bolt.place} · ${bolt.distance.toFixed(1)}km · ${bolt.pace}`;
   overlay.style.display = 'flex';
   hideSidebar();
   requestAnimationFrame(() => requestAnimationFrame(() => {

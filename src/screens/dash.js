@@ -76,7 +76,7 @@ export function render() {
       <div class="bezel" style="padding:14px 16px; border-radius:20px; display:flex; align-items:center; justify-content:space-between;">
         <div>
           <p style="font-size:14px; font-weight:600;">한강 새벽 LSD</p>
-          <p style="font-size:12px; color:#52525b; margin-top:2px;">반포 · 8km · 2/4</p>
+          <p style="font-size:12px; color:#52525b; margin-top:2px;">반포 · 8.0km · 2/4</p>
         </div>
         <div style="text-align:right;">
           <p class="num" style="font-size:13px; font-weight:700; color:var(--accent);">02:14:30</p>
@@ -86,7 +86,7 @@ export function render() {
       <div class="bezel" style="padding:14px 16px; border-radius:20px; display:flex; align-items:center; justify-content:space-between;">
         <div>
           <p style="font-size:14px; font-weight:600;">석촌호수 회복런</p>
-          <p style="font-size:12px; color:#52525b; margin-top:2px;">송파 · 5km · 1/4</p>
+          <p style="font-size:12px; color:#52525b; margin-top:2px;">송파 · 5.0km · 1/4</p>
         </div>
         <div style="text-align:right;">
           <p class="num" style="font-size:13px; font-weight:600; color:#71717a;">내일</p>
