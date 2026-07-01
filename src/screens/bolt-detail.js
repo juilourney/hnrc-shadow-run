@@ -1,13 +1,69 @@
 import { goToScreen } from '../utils/nav.js';
-import { getBolts, completeBolt } from '../store.js';
+import { getBolts, getPlayers, completeBolt } from '../store.js';
 
-// 방장이 운영하는 번개 (프로토타입 — 한강 새벽 LSD)
-const HOST_BOLT_ID = 'b1';
-// 체크박스 → store 참가자 id 매핑
-const CHECK_MAP = { 'check-me': 'm0', 'check-minsu': 'm1', 'check-hyunwoo': 'm2' };
+let activeBoltId = 'b1'; // 현재 방장 뷰로 연 번개
+let targetKm   = 8;      // 번개 설정 거리 (이 이상 달려야 인증)
+let verifiedKm = null;   // 인식/입력된 인증 거리
+let started    = false;  // 체크리스트(진행) 단계 여부
 
-let targetKm   = 8;    // 번개 생성 시 설정 거리 (이 이상 달려야 인증)
-let verifiedKm = null; // 인식/입력된 인증 거리
+// 외부(bolt 목록)에서 방장 뷰 진입 시 호출 — 해당 번개 데이터로 채움
+export function openHostView(boltId) {
+  const bolt = getBolts().find(b => b.id === boltId);
+  if (!bolt) return;
+  activeBoltId = boltId;
+  targetKm     = bolt.distance;
+  verifiedKm   = null;
+  started      = false;
+
+  // 헤더
+  document.getElementById('detail-title').textContent    = bolt.title;
+  document.getElementById('detail-distance').textContent = bolt.distance.toFixed(1);
+  document.getElementById('detail-pace').textContent     = (bolt.pace || '—').replace('/km', '');
+  document.getElementById('detail-count').textContent    = `${bolt.count}/${bolt.max}`;
+  document.getElementById('detail-place').innerHTML      = `📍 ${bolt.place || '장소 미정'}`;
+
+  // 단일팀 알림 노출 여부
+  const on = bolt.isSingleTeam ? '' : 'none';
+  document.getElementById('detail-singleteam-notice').style.display   = on;
+  document.getElementById('checklist-singleteam-notice').style.display = on;
+
+  // 참가자 목록 + 체크인 체크박스
+  const players = getPlayers();
+  const parts = bolt.participants.map(pid => players.find(p => p.id === pid)).filter(Boolean);
+
+  document.getElementById('detail-participants').innerHTML = parts.map(p => {
+    const host = p.id === bolt.hostId;
+    return `
+    <div class="bezel" style="padding:14px 16px; border-radius:18px; display:flex; align-items:center; gap:12px">
+      <span style="width:36px;height:36px;border-radius:50%;
+        background:${host ? 'var(--accent-tint)' : '#3f3f46'};
+        ${host ? 'border:1.5px solid var(--accent);' : ''}
+        display:flex;align-items:center;justify-content:center;font-size:13px">${p.name[0]}</span>
+      <span style="font-size:14px; font-weight:${host ? '600' : '500'}; color:${host ? 'var(--accent)' : '#e4e4e7'}">
+        ${p.name}${host ? ' <span style="font-size:12px; color:#3f3f46; font-weight:400">· 방장</span>' : ''}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('detail-checklist-people').innerHTML = parts.map(p => {
+    const host = p.id === bolt.hostId;
+    return `
+    <label style="display:flex; align-items:center; gap:14px; padding:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:18px; cursor:pointer;">
+      <input type="checkbox" class="checkin-box" data-pid="${p.id}" checked style="width:20px; height:20px; accent-color:var(--accent); cursor:pointer;" />
+      <span style="font-size:15px; font-weight:500">${p.name}${host ? ' (방장)' : ''}</span>
+    </label>`;
+  }).join('');
+
+  // 뷰 초기화 (대기 화면)
+  document.getElementById('bolt-detail-waiting').style.display   = 'block';
+  document.getElementById('bolt-detail-checklist').style.display = 'none';
+  const action = document.getElementById('bolt-detail-action');
+  action.textContent = '번개 시작하기';
+  action.style.opacity = ''; action.style.pointerEvents = '';
+  document.getElementById('bolt-detail-cancel').style.display = '';
+  document.getElementById('verify-target').textContent = `${bolt.distance.toFixed(1)}km`;
+
+  goToScreen('s-bolt-detail');
+}
 
 export function render() {
   return `
@@ -21,29 +77,29 @@ export function render() {
     </div>
     <div class="anim-up" style="padding-top:8px">
       <span class="chip" style="background:var(--accent-tint); color:var(--accent); margin-bottom:10px; display:inline-flex;">D-DAY · 05:30</span>
-      <h2 style="font-size:26px; font-weight:700; letter-spacing:-.02em; margin-top:10px;">한강 새벽 LSD</h2>
+      <h2 id="detail-title" style="font-size:26px; font-weight:700; letter-spacing:-.02em; margin-top:10px;">한강 새벽 LSD</h2>
       <p style="font-size:13px; color:#52525b; margin-top:4px;">호스트 · 나 (방장)</p>
     </div>
 
     <div class="bezel anim-up-1" style="margin-top:16px; padding:2px; border-radius:24px">
       <div class="bezel-in" style="padding:18px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; text-align:center">
-        <div><p class="num" style="font-size:22px; font-weight:700; color:var(--accent)">8.0</p><p style="font-size:11px; color:#52525b">km</p></div>
+        <div><p id="detail-distance" class="num" style="font-size:22px; font-weight:700; color:var(--accent)">8.0</p><p style="font-size:11px; color:#52525b">km</p></div>
         <div style="border-left:1px solid rgba(255,255,255,.06); border-right:1px solid rgba(255,255,255,.06)">
-          <p class="num" style="font-size:22px; font-weight:700">5:30</p><p style="font-size:11px; color:#52525b">/km</p></div>
-        <div><p class="num" style="font-size:22px; font-weight:700">3/4</p><p style="font-size:11px; color:#52525b">참여</p></div>
+          <p id="detail-pace" class="num" style="font-size:22px; font-weight:700">5:30</p><p style="font-size:11px; color:#52525b">/km</p></div>
+        <div><p id="detail-count" class="num" style="font-size:22px; font-weight:700">3/4</p><p style="font-size:11px; color:#52525b">참여</p></div>
       </div>
     </div>
 
-    <div class="bezel anim-up-2" style="margin-top:10px; padding:14px 16px; border-radius:18px; display:flex; align-items:center; gap:10px; font-size:14px; color:#71717a">
+    <div id="detail-place" class="bezel anim-up-2" style="margin-top:10px; padding:14px 16px; border-radius:18px; display:flex; align-items:center; gap:10px; font-size:14px; color:#71717a">
       📍 반포 잠수교 남단 광장
     </div>
 
     <!-- 단일팀 조건 충족 알림 (방장에게만 노출) -->
-    <div class="anim-up-2" style="margin-top:10px; background:rgba(251,146,60,.12); border:1px solid rgba(251,146,60,.35); border-radius:18px; padding:14px 18px; display:flex; align-items:flex-start; gap:10px;">
+    <div id="detail-singleteam-notice" class="anim-up-2" style="margin-top:10px; background:rgba(251,146,60,.12); border:1px solid rgba(251,146,60,.35); border-radius:18px; padding:14px 18px; display:flex; align-items:flex-start; gap:10px;">
       <span style="font-size:18px; flex-shrink:0;">🔥</span>
       <div>
         <p style="font-size:13px; font-weight:700; color:#fb923c;">단일팀 번개 조건 충족!</p>
-        <p style="font-size:12px; color:rgba(251,146,60,.7); margin-top:3px; line-height:1.5;">현재 3명이 같은 팀입니다. 잠금을 걸면 단일팀 번개로 전환되어 팀 고유 스킬이 발동됩니다.</p>
+        <p style="font-size:12px; color:rgba(251,146,60,.7); margin-top:3px; line-height:1.5;">참여자 전원이 같은 팀입니다. 잠금을 걸면 단일팀 번개로 전환되어 팀 고유 스킬이 발동됩니다.</p>
       </div>
     </div>
 
@@ -59,20 +115,7 @@ export function render() {
     </div>
 
     <p class="eyebrow anim-up-3" style="color:#3f3f46; margin:20px 0 10px">참가자 확인</p>
-    <div style="display:flex; flex-direction:column; gap:8px" class="anim-up-4">
-      <div class="bezel" style="padding:14px 16px; border-radius:18px; display:flex; align-items:center; gap:12px">
-        <span style="width:36px;height:36px;border-radius:50%;background:var(--accent-tint);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px">나</span>
-        <span style="font-size:14px; font-weight:600; color:var(--accent)">나 <span style="font-size:12px; color:#3f3f46; font-weight:400">· 방장</span></span>
-      </div>
-      <div class="bezel" style="padding:14px 16px; border-radius:18px; display:flex; align-items:center; gap:12px">
-        <span style="width:36px;height:36px;border-radius:50%;background:#3f3f46;display:flex;align-items:center;justify-content:center;font-size:13px">민</span>
-        <span style="font-size:14px; font-weight:500">김민수</span>
-      </div>
-      <div class="bezel" style="padding:14px 16px; border-radius:18px; display:flex; align-items:center; gap:12px">
-        <span style="width:36px;height:36px;border-radius:50%;background:#3f3f46;display:flex;align-items:center;justify-content:center;font-size:13px">현</span>
-        <span style="font-size:14px; font-weight:500">박현우</span>
-      </div>
-    </div>
+    <div id="detail-participants" style="display:flex; flex-direction:column; gap:8px" class="anim-up-4"></div>
   </div>
 
   <!-- 체크리스트 뷰 (번개 시작 후) -->
@@ -80,7 +123,7 @@ export function render() {
     <div style="padding:18px 18px 0;">
 
       <!-- 단일팀 번개 시작 알림 -->
-      <div style="background:rgba(251,146,60,.12); border:1px solid rgba(251,146,60,.3); border-radius:18px; padding:16px 18px; text-align:center; margin-bottom:16px;">
+      <div id="checklist-singleteam-notice" style="background:rgba(251,146,60,.12); border:1px solid rgba(251,146,60,.3); border-radius:18px; padding:16px 18px; text-align:center; margin-bottom:16px;">
         <p style="font-size:15px; font-weight:700; color:#fb923c;">🔥 단일팀 번개 진행 중!</p>
         <p style="font-size:12px; color:rgba(251,146,60,.7); margin-top:4px;">완료 후 팀 고유 스킬이 발동됩니다</p>
       </div>
@@ -88,20 +131,7 @@ export function render() {
       <p style="font-size:16px; font-weight:700; margin-bottom:6px;">참여 체크인</p>
       <p style="font-size:12px; color:#52525b; margin-bottom:20px;">실제로 완주한 참가자를 체크하세요</p>
 
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <label style="display:flex; align-items:center; gap:14px; padding:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:18px; cursor:pointer;">
-          <input type="checkbox" id="check-me" checked style="width:20px; height:20px; accent-color:var(--accent); cursor:pointer;" />
-          <span style="font-size:15px; font-weight:500">나 (방장)</span>
-        </label>
-        <label style="display:flex; align-items:center; gap:14px; padding:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:18px; cursor:pointer;">
-          <input type="checkbox" id="check-minsu" checked style="width:20px; height:20px; accent-color:var(--accent); cursor:pointer;" />
-          <span style="font-size:15px; font-weight:500">김민수</span>
-        </label>
-        <label style="display:flex; align-items:center; gap:14px; padding:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:18px; cursor:pointer;">
-          <input type="checkbox" id="check-hyunwoo" style="width:20px; height:20px; accent-color:var(--accent); cursor:pointer;" />
-          <span style="font-size:15px; font-weight:500">박현우</span>
-        </label>
-      </div>
+      <div id="detail-checklist-people" style="display:flex; flex-direction:column; gap:10px;"></div>
 
       <!-- 방장 거리 인증 (기록 사진 업로드 → AI 인식) -->
       <div style="margin-top:22px;">
@@ -127,10 +157,6 @@ export function init() {
   document.getElementById('bolt-detail-back').addEventListener('click', () => goToScreen('gs-bolt'));
   document.getElementById('bolt-detail-cancel').addEventListener('click', () => goToScreen('gs-bolt'));
 
-  // 설정 거리를 store에서 읽어옴
-  targetKm = getBolts().find(b => b.id === HOST_BOLT_ID)?.distance ?? 8;
-
-  let started = false;
   document.getElementById('bolt-detail-action').addEventListener('click', async () => {
     if (!started) {
       // 번개 시작 → 체크리스트 뷰로 전환
@@ -146,10 +172,9 @@ export function init() {
     } else {
       // 제출: 인증 확인 → store에 마일리지 반영
       if (verifiedKm === null || verifiedKm < targetKm) return;
-      const checked = Object.entries(CHECK_MAP)
-        .filter(([elId]) => document.getElementById(elId)?.checked)
-        .map(([, pid]) => pid);
-      await completeBolt(HOST_BOLT_ID, verifiedKm, checked);
+      const checked = [...document.querySelectorAll('#detail-checklist-people .checkin-box:checked')]
+        .map(el => el.dataset.pid);
+      await completeBolt(activeBoltId, verifiedKm, checked);
       goToScreen('s-bolt-buff');
     }
   });

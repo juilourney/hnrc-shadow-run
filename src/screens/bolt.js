@@ -1,6 +1,7 @@
 import { goToScreen } from '../utils/nav.js';
 import { subscribe, getBolts, getJoinedBoltId,
          createBolt as storeCreateBolt, joinBolt as storeJoinBolt, leaveBolt } from '../store.js';
+import { openHostView } from './bolt-detail.js';
 
 let selectedBolt = null; // 참여 확인 시트용 임시 선택
 
@@ -228,7 +229,11 @@ function renderBoltList() {
     document.getElementById(`bolt-card-${b.id}`).addEventListener('click', () => {
       if (b.locked && !b.joined) { showToast('잠긴 번개입니다.'); return; }
       const joinedId = getJoinedBoltId();
-      if (b.joined) { goToScreen('s-bolt-join'); return; }
+      if (b.joined) {
+        if (b.isHost) openHostView(b.id);   // 방장 → 인증/완료 뷰
+        else goToScreen('s-bolt-join');     // 참가자 → 참여 뷰
+        return;
+      }
       if (joinedId)  { showToast('이미 다른 번개에 참여 중입니다'); return; }
       selectedBolt = b;
       openJoinOverlay(b);
