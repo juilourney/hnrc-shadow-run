@@ -1,5 +1,5 @@
 import { goToScreen } from '../utils/nav.js';
-import { getBolts, getPlayers, completeBolt, toggleBoltLock } from '../store.js';
+import { getBolts, getPlayers, setPendingBolt, toggleBoltLock } from '../store.js';
 
 let activeBoltId = 'b1'; // 현재 방장 뷰로 연 번개
 let targetKm   = 8;      // 번개 설정 거리 (이 이상 달려야 인증)
@@ -177,7 +177,17 @@ export function init() {
       if (verifiedKm === null || verifiedKm < targetKm) return;
       const checked = [...document.querySelectorAll('#detail-checklist-people .checkin-box:checked')]
         .map(el => el.dataset.pid);
-      await completeBolt(activeBoltId, verifiedKm, checked);
+      const bolt = getBolts().find(b => b.id === activeBoltId);
+      const allPlayers = getPlayers();
+      const firstParticipant = allPlayers.find(p => bolt?.participants.includes(p.id));
+      setPendingBolt({
+        boltId: activeBoltId,
+        distanceKm: verifiedKm,
+        participantIds: checked,
+        isSingleTeam: bolt?.isSingleTeam ?? false,
+        team: bolt?.isSingleTeam ? (firstParticipant?.team ?? null) : null,
+        boltTitle: bolt?.title ?? '번개',
+      });
       goToScreen('s-bolt-buff');
     }
   });

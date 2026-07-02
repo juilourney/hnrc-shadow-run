@@ -76,6 +76,15 @@ const state = {
   },
 };
 
+// ── 화면간 데이터 전달 (bolt-detail → bolt-buff → bolt-result) ──
+let _pendingBolt = null;
+let _lastBoltResult = null;
+
+export function setPendingBolt(data)    { _pendingBolt = data; }
+export function getPendingBolt()        { return _pendingBolt; }
+export function setLastBoltResult(data) { _lastBoltResult = data; }
+export function getLastBoltResult()     { return _lastBoltResult; }
+
 // ── 구독 (subscribe/notify) ──────────────────────────────
 const listeners = new Set();
 
@@ -249,7 +258,7 @@ export async function toggleBoltLock(boltId, locked) {
 
 // 번개 완료 → 마일리지·게이지 반영 (게임의 핵심 규칙)
 //   distanceKm: 실제 완주 거리, participantIds: 완주 체크된 참가자
-export async function completeBolt(boltId, distanceKm, participantIds) {
+export async function completeBolt(boltId, distanceKm, participantIds, buffMultiplier = 1) {
   const bolt = state.bolts.find(b => b.id === boltId);
   if (!bolt) throw new Error('번개를 찾을 수 없습니다');
 
@@ -262,7 +271,7 @@ export async function completeBolt(boltId, distanceKm, participantIds) {
 
     // 1) 역할 배수 — 적발 시 능력 박탈 + 마일리지 영구 50% 감소
     const penalized = isPenalized(p);
-    let km = distanceKm;
+    let km = distanceKm * (singleTeam ? 1 : buffMultiplier); // 혼합팀만 버프 배수 적용
     if (p.role === 'elite' && !penalized) km *= CONFIG.eliteMultiplier;
     if (penalized) km *= CONFIG.votePenalty;
 
@@ -303,7 +312,9 @@ export async function completeBolt(boltId, distanceKm, participantIds) {
   bolt.status = 'done';
   if (state.joinedBoltId === boltId) state.joinedBoltId = null;
   notify();
-  return { singleTeam, isTug };
+
+  const boltTeam = singleTeam ? playerById(bolt.participants[0])?.team ?? null : null;
+  return { singleTeam, isTug, distanceKm, buffMultiplier, participantIds, participantCount: participantIds.length, boltTeam };
 }
 
 // 투표 지목
