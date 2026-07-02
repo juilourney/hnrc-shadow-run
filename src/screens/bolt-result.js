@@ -160,7 +160,7 @@ function calcTotal(singleTeam, team, distanceKm, buffMultiplier, count) {
   const buffed = distanceKm * multiplier;
   return {
     km: buffed,
-    desc: multiplier !== 1 ? `기본 ${distanceKm.toFixed(1)} × ${multiplier}배` : `기본 ${distanceKm.toFixed(1)}`
+    desc: multiplier !== 1 ? `기본 ${distanceKm.toFixed(1)} ×${multiplier}` : `기본 ${distanceKm.toFixed(1)}`
   };
 }
 

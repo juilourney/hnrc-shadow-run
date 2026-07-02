@@ -219,7 +219,7 @@ export function init() {
 
 // store 기준으로 번개 목록 렌더 + 카드 탭 핸들러 부착
 function renderBoltList() {
-  const bolts = getBolts();
+  const bolts = getBolts().filter(b => b.status !== 'done');
   const wrap  = document.getElementById('bolt-cards');
   if (!wrap) return;
   wrap.innerHTML = bolts.map((b, i) => boltCard(b, `anim-up-${Math.min(i + 1, 4)}`)).join('');

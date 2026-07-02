@@ -4,9 +4,9 @@ import { openResultView } from './bolt-result.js';
 
 // ── 카드 풀 ───────────────────────────────────────────────
 const BUFF_CARDS = [
-  { name: '트리플 적립', icon: '×3', multiplier: 3,   color: '#fb923c', bg: 'rgba(251,146,60,.15)',  border: 'rgba(251,146,60,.35)',  desc: '달린 km × 3배 적립 · 이번 번개 최고 버프!' },
-  { name: '더블 적립',  icon: '×2', multiplier: 2,   color: '#38bdf8', bg: 'rgba(56,189,248,.15)',  border: 'rgba(56,189,248,.35)',  desc: '달린 km × 2배 적립 · 두 배의 마일리지 획득' },
-  { name: '1.5배 적립', icon: '×1.5', multiplier: 1.5, color: '#a78bfa', bg: 'rgba(167,139,250,.12)', border: 'rgba(167,139,250,.3)',  desc: '달린 km × 1.5배 적립 · 소소한 행운' },
+  { name: '트리플 적립', icon: '×3', multiplier: 3,   color: '#fb923c', bg: 'rgba(251,146,60,.15)',  border: 'rgba(251,146,60,.35)',  desc: '달린 km ×3 적립 · 이번 번개 최고 버프!' },
+  { name: '더블 적립',  icon: '×2', multiplier: 2,   color: '#38bdf8', bg: 'rgba(56,189,248,.15)',  border: 'rgba(56,189,248,.35)',  desc: '달린 km ×2 적립 · 마일리지 두 배 획득' },
+  { name: '1.5배 적립', icon: '×1.5', multiplier: 1.5, color: '#a78bfa', bg: 'rgba(167,139,250,.12)', border: 'rgba(167,139,250,.3)',  desc: '달린 km ×1.5 적립 · 소소한 행운' },
   { name: '기본 적립', icon: '×1', multiplier: 1,   color: '#71717a', bg: 'rgba(113,113,122,.12)', border: 'rgba(113,113,122,.25)', desc: '달린 km 그대로 적립 · 기본 마일리지' },
 ];
 const PACER_SKILL = { name: '시너지 스킬', icon: '🔥', multiplier: 1, color: '#fb923c', bg: 'rgba(251,146,60,.18)', border: 'rgba(251,146,60,.4)', desc: '참가자 1명당 추가 km 적립 · 팀 인원이 많을수록 유리' };
@@ -23,27 +23,28 @@ let _raf    = null;
 let _locked = false;
 let _track  = null;
 let _outer  = null;
-let _slotX  = 0;
+let _baseX  = 0;   // 트랙 기준 위치 (카드 한 장 왼쪽 버퍼 포함)
+let _offset = 0;   // [0, CARD_SLOT) 순환 오프셋 — 모든 카드가 동일하므로 이 폭마다 완벽히 반복
 let _lastTs = null;
 
 function _spinTick(ts) {
   if (!_lastTs) _lastTs = ts;
   const dt = Math.min((ts - _lastTs) / 1000, 0.05);
   _lastTs = ts;
-  _slotX -= 340 * dt;
-  const loopWidth  = POOL_SIZE * CARD_SLOT;
-  const containerW = (_outer?.offsetWidth) || window.innerWidth;
-  if (_slotX < containerW / 2 - CARD_W / 2 - loopWidth) _slotX += loopWidth;
-  if (_track) _track.style.transform = `translateX(${_slotX}px)`;
+  // 카드 한 장 폭마다 순환 → 리셋 지점이 시각적으로 완전히 이어짐 (끊김 없음)
+  _offset = (_offset + 340 * dt) % CARD_SLOT;
+  if (_track) _track.style.transform = `translateX(${_baseX - _offset}px)`;
   _raf = requestAnimationFrame(_spinTick);
 }
 
 function _startSpin() {
   if (_raf) { cancelAnimationFrame(_raf); _raf = null; }
   _lastTs = null;
+  _offset = 0;
   const containerW = (_outer?.offsetWidth) || window.innerWidth;
-  _slotX = containerW / 2 - CARD_W / 2;
-  if (_track) _track.style.transform = `translateX(${_slotX}px)`;
+  // 왼쪽에 카드 한 장 버퍼를 둬서 순환 중에도 좌측이 비지 않게
+  _baseX = containerW / 2 - CARD_W / 2 - CARD_SLOT;
+  if (_track) _track.style.transform = `translateX(${_baseX}px)`;
   _raf = requestAnimationFrame(_spinTick);
 }
 
@@ -92,7 +93,7 @@ export function render() {
         <p id="buff-rev-icon" style="font-family:'Space Grotesk';font-size:36px;font-weight:700;line-height:1;"></p>
         <p id="buff-rev-name" style="font-size:12px;font-weight:700;letter-spacing:-.01em;"></p>
       </div>
-      <p id="slot-hint" style="position:absolute;bottom:4px;left:0;right:0;z-index:6;
+      <p id="slot-hint" style="position:absolute;bottom:-22px;left:0;right:0;z-index:6;
         font-size:12px;letter-spacing:.1em;color:#3f3f46;text-align:center;pointer-events:none;">탭하여 뽑기</p>
     </div>
 
