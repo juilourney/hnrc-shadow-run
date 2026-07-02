@@ -67,7 +67,7 @@ export function render() {
   <div id="buff-particles" style="position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden;"></div>
 
   <div style="position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;padding:calc(var(--safe-top)+8px) 0 24px;gap:20px;text-align:center;">
+    justify-content:center;padding:calc(var(--safe-top) + 8px) 0 24px;gap:20px;text-align:center;">
 
     <p class="anim-up" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:#52525b;">BUFF CARD</p>
     <h2 class="anim-up-1" style="font-size:24px;font-weight:700;letter-spacing:-.02em;">버프 카드 뽑기</h2>

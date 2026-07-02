@@ -12,40 +12,40 @@ export function render() {
   </div>
 
   <div class="scroll-body" style="position:relative;z-index:2;
-    padding:calc(var(--safe-top)+20px) 22px calc(env(safe-area-inset-bottom,0px)+88px);">
+    padding:calc(var(--safe-top) + 16px) 22px 88px;">
 
-    <div id="result-header" class="anim-up" style="padding-top:8px;text-align:center;margin-bottom:20px;">
-      <div style="width:56px;height:56px;border-radius:18px;background:rgba(251,146,60,.15);
+    <div id="result-header" class="anim-up" style="text-align:center;margin-bottom:14px;">
+      <div style="width:48px;height:48px;border-radius:16px;background:rgba(251,146,60,.15);
         border:1px solid rgba(251,146,60,.3);display:flex;align-items:center;
-        justify-content:center;font-size:24px;margin:0 auto 12px;">⚡</div>
-      <h2 style="font-size:24px;font-weight:700;letter-spacing:-.02em;">번개 완료!</h2>
-      <p id="result-subtitle" style="font-size:13px;color:#52525b;margin-top:4px;"></p>
+        justify-content:center;font-size:22px;margin:0 auto 8px;">⚡</div>
+      <h2 style="font-size:23px;font-weight:700;letter-spacing:-.02em;">번개 완료!</h2>
+      <p id="result-subtitle" style="font-size:13px;color:#52525b;margin-top:3px;"></p>
     </div>
 
     <!-- 실제 거리 -->
-    <div class="bezel anim-up-1" style="padding:20px;border-radius:22px;text-align:center;margin-bottom:10px;">
-      <p style="font-size:11px;color:#52525b;margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase;">실제 완주 거리</p>
-      <p id="result-base-km" class="num" style="font-size:48px;font-weight:800;line-height:1;color:#fafafa;">
-        —<span style="font-size:20px;font-weight:400;color:#52525b;"> km</span></p>
-      <p id="result-participant-count" style="font-size:12px;color:#52525b;margin-top:6px;"></p>
+    <div class="bezel anim-up-1" style="padding:16px;border-radius:22px;text-align:center;margin-bottom:8px;">
+      <p style="font-size:11px;color:#52525b;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;">실제 완주 거리</p>
+      <p id="result-base-km" class="num" style="font-size:42px;font-weight:800;line-height:1;color:#fafafa;">
+        —<span style="font-size:18px;font-weight:400;color:#52525b;"> km</span></p>
+      <p id="result-participant-count" style="font-size:12px;color:#52525b;margin-top:5px;"></p>
     </div>
 
     <!-- 버프 / 스킬 -->
-    <div id="result-buff-section" class="anim-up-2" style="margin-bottom:10px;"></div>
+    <div id="result-buff-section" class="anim-up-2" style="margin-bottom:8px;"></div>
 
     <!-- 최종 합계 -->
-    <div id="result-total-section" class="anim-up-3" style="margin-bottom:10px;
+    <div id="result-total-section" class="anim-up-3" style="margin-bottom:8px;
       background:linear-gradient(135deg,rgba(251,146,60,.15) 0%,rgba(56,189,248,.1) 100%);
-      border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:20px;">
-      <p style="font-size:11px;color:#71717a;margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase;">이번 번개 총 적립</p>
-      <p id="result-total-km" class="num" style="font-size:44px;font-weight:800;line-height:1;">
-        —<span style="font-size:18px;font-weight:400;color:#52525b;"> km</span></p>
-      <p id="result-total-desc" style="font-size:12px;color:#52525b;margin-top:6px;"></p>
+      border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:16px;">
+      <p style="font-size:11px;color:#71717a;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;">이번 번개 총 적립</p>
+      <p id="result-total-km" class="num" style="font-size:38px;font-weight:800;line-height:1;">
+        —<span style="font-size:16px;font-weight:400;color:#52525b;"> km</span></p>
+      <p id="result-total-desc" style="font-size:12px;color:#52525b;margin-top:5px;"></p>
     </div>
 
     <!-- 참가자 -->
-    <div class="bezel anim-up-4" style="padding:16px 18px;border-radius:20px;">
-      <p style="font-size:11px;color:#52525b;margin-bottom:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">완주한 참가자</p>
+    <div class="bezel anim-up-4" style="padding:14px 16px;border-radius:20px;">
+      <p style="font-size:11px;color:#52525b;margin-bottom:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">완주한 참가자</p>
       <div id="result-participants" style="display:flex;gap:12px;flex-wrap:wrap;"></div>
     </div>
 
@@ -108,14 +108,14 @@ export function openResultView() {
 function buffCardBlock(card, distanceKm) {
   const buffedKm = distanceKm * (card.multiplier ?? 1);
   return `
-  <div style="background:${card.bg};border:1px solid ${card.border};border-radius:20px;padding:18px 20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+  <div style="background:${card.bg};border:1px solid ${card.border};border-radius:20px;padding:14px 18px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <p style="font-size:12px;color:#52525b;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">적용된 버프</p>
       <span class="chip" style="background:${card.bg};color:${card.color};font-size:10px;">랜덤 카드</span>
     </div>
     <p style="font-size:16px;font-weight:700;color:${card.color};">${card.icon} ${card.name}</p>
     <p style="font-size:12px;color:${card.color};opacity:.65;margin-top:3px;">${card.desc}</p>
-    <div style="height:1px;background:rgba(255,255,255,.06);margin:12px 0;"></div>
+    <div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <p style="font-size:12px;color:#52525b;">버프 적용 마일리지</p>
       <p class="num" style="font-size:18px;font-weight:700;color:${card.color};">+${buffedKm.toFixed(1)} km</p>
@@ -125,14 +125,14 @@ function buffCardBlock(card, distanceKm) {
 
 function singleTeamBlock(card, skillDesc) {
   return `
-  <div style="background:${card.bg};border:1px solid ${card.border};border-radius:20px;padding:18px 20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+  <div style="background:${card.bg};border:1px solid ${card.border};border-radius:20px;padding:14px 18px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <p style="font-size:12px;color:#52525b;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">팀 고유 스킬</p>
       <span class="chip" style="background:${card.bg};color:${card.color};font-size:10px;">단일팀 발동</span>
     </div>
     <p style="font-size:16px;font-weight:700;color:${card.color};">${card.icon} ${card.name}</p>
     <p style="font-size:12px;color:${card.color};opacity:.65;margin-top:3px;">${card.desc}</p>
-    <div style="height:1px;background:rgba(255,255,255,.06);margin:12px 0;"></div>
+    <div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <p style="font-size:12px;color:#52525b;">스킬 효과</p>
       <p style="font-size:13px;font-weight:700;color:${card.color};text-align:right;">${skillDesc}</p>
