@@ -4,10 +4,10 @@ import { openResultView } from './bolt-result.js';
 
 // ── 카드 풀 ───────────────────────────────────────────────
 const BUFF_CARDS = [
-  { name: '더블 적립', icon: '×2', multiplier: 2,   color: '#38bdf8', bg: 'rgba(56,189,248,.15)',  border: 'rgba(56,189,248,.35)',  desc: '이번 번개 마일리지가 2배로 적립됩니다' },
-  { name: '스피드 부스트', icon: '⚡', multiplier: 1.5, color: '#fb923c', bg: 'rgba(251,146,60,.15)',  border: 'rgba(251,146,60,.35)',  desc: '이번 번개 마일리지가 1.5배로 적립됩니다' },
-  { name: '회복 카드',  icon: '♻', multiplier: 1,   color: '#34d399', bg: 'rgba(52,211,153,.12)',  border: 'rgba(52,211,153,.3)',   desc: '다음 투표 패널티 1회가 면제됩니다' },
-  { name: '기본 적립', icon: '✓', multiplier: 1,   color: '#71717a', bg: 'rgba(113,113,122,.12)', border: 'rgba(113,113,122,.25)', desc: '1:1 정상 마일리지가 적립됩니다' },
+  { name: '트리플 적립', icon: '×3', multiplier: 3,   color: '#fb923c', bg: 'rgba(251,146,60,.15)',  border: 'rgba(251,146,60,.35)',  desc: '이번 번개 마일리지가 3배로 적립됩니다' },
+  { name: '더블 적립',  icon: '×2', multiplier: 2,   color: '#38bdf8', bg: 'rgba(56,189,248,.15)',  border: 'rgba(56,189,248,.35)',  desc: '이번 번개 마일리지가 2배로 적립됩니다' },
+  { name: '1.5배 적립', icon: '×1.5', multiplier: 1.5, color: '#a78bfa', bg: 'rgba(167,139,250,.12)', border: 'rgba(167,139,250,.3)',  desc: '이번 번개 마일리지가 1.5배로 적립됩니다' },
+  { name: '기본 적립', icon: '×1', multiplier: 1,   color: '#71717a', bg: 'rgba(113,113,122,.12)', border: 'rgba(113,113,122,.25)', desc: '1:1 정상 마일리지가 적립됩니다' },
 ];
 const PACER_SKILL = { name: '시너지 스킬', icon: '🔥', multiplier: 1, color: '#fb923c', bg: 'rgba(251,146,60,.18)', border: 'rgba(251,146,60,.4)', desc: '팀 전체 마일리지가 추가 적립됩니다' };
 const GHOST_SKILL = { name: '게이지 스킬', icon: '⚔️', multiplier: 1, color: '#fb7185', bg: 'rgba(251,113,133,.15)', border: 'rgba(251,113,133,.35)', desc: '상대팀 게이지에서 달린 거리만큼 직접 삭감됩니다' };
