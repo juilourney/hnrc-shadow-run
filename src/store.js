@@ -64,10 +64,11 @@ const state = {
     { id: 'b1', title: '한강 새벽 LSD', place: '반포 잠수교', distance: 8,  pace: '5:30/km', time: '오늘 05:30', hostId: 'm1', participants: ['m1', 'm2'], max: 4, locked: false, status: 'open' },
     { id: 'b2', title: '강남역 번개',   place: '강남역 11번 출구', distance: 5, pace: '6:00/km', time: '오늘 19:00', hostId: 'm3', participants: ['m3'], max: 4, locked: false, status: 'open' },
     { id: 'b3', title: '비밀 작전조',   place: '탄천', distance: 10, pace: '미공개', time: '내일 07:00', hostId: 'm5', participants: ['m2', 'm5', 'm6'], max: 4, locked: true, status: 'open' },
+    { id: 'b4', title: '페이서 단합런', place: '올림픽공원', distance: 6, pace: '6:00/km', time: '오늘 20:00', hostId: 'm1', participants: ['m1', 'm4', 'm0'], max: 4, locked: false, status: 'open' },
   ],
 
-  // 내가 참여 중인 번개
-  joinedBoltId: null,
+  // 내가 참여 중인 번개 (b4 단일팀 데모 — 참여 뷰 진입 시 팀 컬러 글로우 확인용)
+  joinedBoltId: 'b4',
 
   // 투표
   vote: {
