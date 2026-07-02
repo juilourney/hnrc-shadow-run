@@ -1,4 +1,4 @@
-import { goToScreen } from '../utils/nav.js';
+import { goToScreen, setScrollLock } from '../utils/nav.js';
 import { subscribe, getPlayers, getAbility, useAbility } from '../store.js';
 
 const TEAM_META = {
@@ -120,8 +120,8 @@ export function init() {
   });
 
   // 팝업 닫기
-  document.getElementById('ability-confirm-backdrop').addEventListener('click', closeConfirm);
-  document.getElementById('ability-cancel-btn').addEventListener('click', closeConfirm);
+  document.getElementById('ability-confirm-backdrop').addEventListener('click', () => { closeConfirm(); setScrollLock(false); });
+  document.getElementById('ability-cancel-btn').addEventListener('click', () => { closeConfirm(); setScrollLock(false); });
 
   document.getElementById('ability-ok-btn').addEventListener('click', () => {
     closeConfirm();
@@ -182,7 +182,12 @@ function renderList() {
       }
     }
 
-    const tappable = isSpecial && !m.isSelf && (canUse || revealed[m.id]);
+    // 이 능력으로 이미 알 수 있는 정보 (탐정=팀: 개인확인 or 투표공개팀 / 밀정=역할)
+    const knownForAbility = ab.kind === 'team'
+      ? (revealed[m.id]?.team || m.publicTeam)
+      : revealed[m.id]?.role;
+
+    const tappable = isSpecial && !m.isSelf && (canUse || knownForAbility);
     const selfStyle = m.isSelf
       ? 'background:var(--accent-tint); border-color:var(--accent-border);' : '';
 
@@ -190,7 +195,7 @@ function renderList() {
     <div class="bezel" id="member-card-${m.id}"
       style="padding:14px 16px; border-radius:20px; display:flex; align-items:center; gap:12px;
         ${selfStyle} ${tappable ? 'cursor:pointer;' : ''}"
-      ${tappable ? `data-member-id="${m.id}" data-member-name="${m.name}" data-revealed="${!!revealed[m.id]}"` : ''}>
+      ${tappable ? `data-member-id="${m.id}" data-member-name="${m.name}" data-revealed="${!!knownForAbility}"` : ''}>
       <span style="width:38px; height:38px; border-radius:50%;
         background:${m.isSelf ? 'var(--accent-tint)' : '#3f3f46'};
         ${m.isSelf ? 'border:1.5px solid var(--accent);' : ''}
@@ -227,12 +232,16 @@ function renderList() {
 function showAlreadyRevealedPopup(id) {
   const member = getPlayers().find(m => m.id === id);
   if (!member) return;
-  const r = getAbility().revealed[id];
+  const ab = getAbility();
+  const r = ab.revealed[id];
   let msg = '이미 확인된 참가자입니다';
-  if (r.team) {
-    const t = TEAM_META[r.team];
-    msg = `${member.name}님의 팀은 이미 확인되었습니다 (${t.label})`;
-  } else if (r.role) {
+  if (ab.kind === 'team') {
+    const team = r?.team || member.publicTeam;
+    if (team) {
+      const t = TEAM_META[team];
+      msg = `${member.name}님의 팀은 이미 확인되었습니다 (${t.label})`;
+    }
+  } else if (r?.role) {
     const ro = ROLE_META[r.role];
     msg = `${member.name}님의 역할은 이미 확인되었습니다 (${ro.label})`;
   }
@@ -242,11 +251,13 @@ function showAlreadyRevealedPopup(id) {
 function showInfoToast(msg) {
   const el = document.createElement('div');
   el.textContent = msg;
+  // 중앙 정렬은 margin:auto로 (transform은 fadeUp 애니메이션이 덮어써서 쏠림 발생)
   el.style.cssText = `
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    position:fixed; bottom:24px; left:0; right:0; margin:0 auto;
+    width:fit-content; max-width:90vw;
     background:#1c1c1e; border:1px solid rgba(255,255,255,.12); color:#e4e4e7;
     font-size:13px; padding:10px 18px; border-radius:14px; z-index:9999;
-    white-space:nowrap; max-width:90vw; white-space:normal; text-align:center;
+    text-align:center;
     animation:fadeUp .25s var(--spring) both;
   `;
   document.body.appendChild(el);
@@ -278,6 +289,7 @@ function openConfirm(id, name) {
   const overlay = document.getElementById('ability-confirm-overlay');
   const sheet   = document.getElementById('ability-confirm-sheet');
   overlay.style.display = 'flex';
+  setScrollLock(true);
   requestAnimationFrame(() => requestAnimationFrame(() => {
     sheet.style.transform = 'translateY(0)';
   }));
@@ -320,6 +332,7 @@ async function showResult(id) {
   const overlay = document.getElementById('ability-result-overlay');
   const sheet   = document.getElementById('ability-result-sheet');
   overlay.style.display = 'flex';
+  setScrollLock(true);
   requestAnimationFrame(() => requestAnimationFrame(() => {
     sheet.style.transform = 'translateY(0)';
   }));
@@ -328,5 +341,6 @@ async function showResult(id) {
 function closeResult() {
   const sheet = document.getElementById('ability-result-sheet');
   sheet.style.transform = 'translateY(100%)';
+  setScrollLock(false);
   setTimeout(() => { document.getElementById('ability-result-overlay').style.display = 'none'; }, 380);
 }

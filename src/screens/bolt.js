@@ -1,4 +1,4 @@
-import { goToScreen } from '../utils/nav.js';
+import { goToScreen, setScrollLock } from '../utils/nav.js';
 import { subscribe, getBolts, getJoinedBoltId,
          createBolt as storeCreateBolt, joinBolt as storeJoinBolt, leaveBolt } from '../store.js';
 import { openHostView } from './bolt-detail.js';
@@ -334,6 +334,7 @@ function openJoinOverlay(bolt) {
   document.getElementById('join-bolt-title').textContent = bolt.title;
   document.getElementById('join-bolt-info').textContent  = `${bolt.place} · ${bolt.distance.toFixed(1)}km · ${bolt.pace}`;
   overlay.style.display = 'flex';
+  setScrollLock(true);
   hideSidebar();
   requestAnimationFrame(() => requestAnimationFrame(() => {
     sheet.style.transform = 'translateY(0)';
@@ -343,6 +344,7 @@ function openJoinOverlay(bolt) {
 function closeJoinOverlay() {
   const sheet = document.getElementById('bolt-join-sheet');
   sheet.style.transform = 'translateY(100%)';
+  setScrollLock(false);
   setTimeout(() => { document.getElementById('bolt-join-overlay').style.display = 'none'; }, 400);
 }
 

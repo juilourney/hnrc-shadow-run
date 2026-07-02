@@ -3,6 +3,11 @@ let _programmaticScroll = false;
 
 export function isProgrammaticScroll() { return _programmaticScroll; }
 
+// 바텀시트 등 오버레이가 뜬 동안 배경(게임 섹션) 스크롤 잠금
+export function setScrollLock(locked) {
+  document.documentElement.classList.toggle('lock-scroll', locked);
+}
+
 const SECTION_TAB = {
   'gs-dash': 'home', 'gs-bolt': 'bolt', 'gs-vote': 'vote',
   'gs-members': 'members', 'gs-guide': 'guide',

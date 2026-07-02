@@ -1,4 +1,4 @@
-import { goToScreen } from '../utils/nav.js';
+import { goToScreen, setScrollLock } from '../utils/nav.js';
 import { subscribe, getPlayers, getMe, getVote, castVote as storeCastVote, tallyVote, ROLES } from '../store.js';
 
 const TEAM_META = {
@@ -312,6 +312,7 @@ function openConfirmSheet() {
   const sheet   = document.getElementById('vote-confirm-sheet');
   const okBtn   = document.getElementById('vote-confirm-ok');
   overlay.style.display = 'flex';
+  setScrollLock(true);
 
   // 되돌릴 수 없는 지명 — 시트가 올라오는 동안 확인 버튼을 잠깐 잠가
   // 연속 탭으로 인한 실수 확정을 방지 (슬라이드 애니메이션 .4s 후 해제)
@@ -331,6 +332,7 @@ function openConfirmSheet() {
 function closeConfirmSheet() {
   const sheet = document.getElementById('vote-confirm-sheet');
   sheet.style.transform = 'translateY(100%)';
+  setScrollLock(false);
   setTimeout(() => { document.getElementById('vote-confirm-overlay').style.display = 'none'; }, 380);
 }
 
