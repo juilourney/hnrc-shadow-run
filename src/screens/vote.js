@@ -305,10 +305,24 @@ function showVoteResult(r) {
   document.getElementById('vote-result-elite-penalty').style.display = r.isElite ? 'flex' : 'none';
 }
 
+let _okUnlockTimer = null;
+
 function openConfirmSheet() {
   const overlay = document.getElementById('vote-confirm-overlay');
   const sheet   = document.getElementById('vote-confirm-sheet');
+  const okBtn   = document.getElementById('vote-confirm-ok');
   overlay.style.display = 'flex';
+
+  // 되돌릴 수 없는 지명 — 시트가 올라오는 동안 확인 버튼을 잠깐 잠가
+  // 연속 탭으로 인한 실수 확정을 방지 (슬라이드 애니메이션 .4s 후 해제)
+  okBtn.style.pointerEvents = 'none';
+  okBtn.style.opacity       = '.45';
+  clearTimeout(_okUnlockTimer);
+  _okUnlockTimer = setTimeout(() => {
+    okBtn.style.pointerEvents = '';
+    okBtn.style.opacity       = '';
+  }, 450);
+
   requestAnimationFrame(() => requestAnimationFrame(() => {
     sheet.style.transform = 'translateY(0)';
   }));
