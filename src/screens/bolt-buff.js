@@ -4,23 +4,48 @@ import { openResultView } from './bolt-result.js';
 
 // ── 카드 풀 ───────────────────────────────────────────────
 const BUFF_CARDS = [
-  { name: '트리플 적립', icon: '×3', multiplier: 3,   color: '#fb923c', bg: 'rgba(251,146,60,.15)',  border: 'rgba(251,146,60,.35)',  desc: '이번 번개 마일리지가 3배로 적립됩니다' },
-  { name: '더블 적립',  icon: '×2', multiplier: 2,   color: '#38bdf8', bg: 'rgba(56,189,248,.15)',  border: 'rgba(56,189,248,.35)',  desc: '이번 번개 마일리지가 2배로 적립됩니다' },
-  { name: '1.5배 적립', icon: '×1.5', multiplier: 1.5, color: '#a78bfa', bg: 'rgba(167,139,250,.12)', border: 'rgba(167,139,250,.3)',  desc: '이번 번개 마일리지가 1.5배로 적립됩니다' },
-  { name: '기본 적립', icon: '×1', multiplier: 1,   color: '#71717a', bg: 'rgba(113,113,122,.12)', border: 'rgba(113,113,122,.25)', desc: '1:1 정상 마일리지가 적립됩니다' },
+  { name: '트리플 적립', icon: '×3', multiplier: 3,   color: '#fb923c', bg: 'rgba(251,146,60,.15)',  border: 'rgba(251,146,60,.35)',  desc: '달린 km × 3배 적립 · 이번 번개 최고 버프!' },
+  { name: '더블 적립',  icon: '×2', multiplier: 2,   color: '#38bdf8', bg: 'rgba(56,189,248,.15)',  border: 'rgba(56,189,248,.35)',  desc: '달린 km × 2배 적립 · 두 배의 마일리지 획득' },
+  { name: '1.5배 적립', icon: '×1.5', multiplier: 1.5, color: '#a78bfa', bg: 'rgba(167,139,250,.12)', border: 'rgba(167,139,250,.3)',  desc: '달린 km × 1.5배 적립 · 소소한 행운' },
+  { name: '기본 적립', icon: '×1', multiplier: 1,   color: '#71717a', bg: 'rgba(113,113,122,.12)', border: 'rgba(113,113,122,.25)', desc: '달린 km 그대로 적립 · 기본 마일리지' },
 ];
-const PACER_SKILL = { name: '시너지 스킬', icon: '🔥', multiplier: 1, color: '#fb923c', bg: 'rgba(251,146,60,.18)', border: 'rgba(251,146,60,.4)', desc: '팀 전체 마일리지가 추가 적립됩니다' };
-const GHOST_SKILL = { name: '게이지 스킬', icon: '⚔️', multiplier: 1, color: '#fb7185', bg: 'rgba(251,113,133,.15)', border: 'rgba(251,113,133,.35)', desc: '상대팀 게이지에서 달린 거리만큼 직접 삭감됩니다' };
+const PACER_SKILL = { name: '시너지 스킬', icon: '🔥', multiplier: 1, color: '#fb923c', bg: 'rgba(251,146,60,.18)', border: 'rgba(251,146,60,.4)', desc: '참가자 1명당 추가 km 적립 · 팀 인원이 많을수록 유리' };
+const GHOST_SKILL = { name: '게이지 스킬', icon: '⚔️', multiplier: 1, color: '#fb7185', bg: 'rgba(251,113,133,.15)', border: 'rgba(251,113,133,.35)', desc: '달린 거리만큼 상대 게이지 직접 감소 · 전략형 스킬' };
 
-const CARD_W   = 88;
-const CARD_H   = 124;
-const CARD_GAP = 14;
+const CARD_W    = 88;
+const CARD_H    = 124;
+const CARD_GAP  = 14;
 const CARD_SLOT = CARD_W + CARD_GAP;
-const POOL_SIZE = 4; // 루프 단위
+const POOL_SIZE = 4;
 
-// 모듈 스코프 — openBuffView에서 RAF 취소·상태 리셋을 위해
+// ── 모듈 스코프 슬롯 상태 (openBuffView에서 재시작 가능하도록) ─────
 let _raf    = null;
 let _locked = false;
+let _track  = null;
+let _outer  = null;
+let _slotX  = 0;
+let _lastTs = null;
+
+function _spinTick(ts) {
+  if (!_lastTs) _lastTs = ts;
+  const dt = Math.min((ts - _lastTs) / 1000, 0.05);
+  _lastTs = ts;
+  _slotX -= 340 * dt;
+  const loopWidth  = POOL_SIZE * CARD_SLOT;
+  const containerW = (_outer?.offsetWidth) || window.innerWidth;
+  if (_slotX < containerW / 2 - CARD_W / 2 - loopWidth) _slotX += loopWidth;
+  if (_track) _track.style.transform = `translateX(${_slotX}px)`;
+  _raf = requestAnimationFrame(_spinTick);
+}
+
+function _startSpin() {
+  if (_raf) { cancelAnimationFrame(_raf); _raf = null; }
+  _lastTs = null;
+  const containerW = (_outer?.offsetWidth) || window.innerWidth;
+  _slotX = containerW / 2 - CARD_W / 2;
+  if (_track) _track.style.transform = `translateX(${_slotX}px)`;
+  _raf = requestAnimationFrame(_spinTick);
+}
 
 export function render() {
   const backs = Array(POOL_SIZE * 3).fill(0).map(() => `
@@ -130,60 +155,33 @@ export function openBuffView() {
   btn.style.opacity       = '0';
   btn.style.pointerEvents = 'none';
   btn.style.transform     = 'translateY(8px)';
+
+  // 슬롯 애니메이션 재시작
+  _startSpin();
 }
 
 export function init() {
   ensureKeyframes();
 
   let drawnCard = null;
-  let pool      = BUFF_CARDS; // 탭 시점에 갱신
+  let pool      = BUFF_CARDS;
 
-  const track   = document.getElementById('slot-track');
-  const shaker  = document.getElementById('slot-shaker');
-  const outer   = document.getElementById('slot-outer');
+  // 모듈 스코프 DOM 참조 설정
+  _track = document.getElementById('slot-track');
+  _outer = document.getElementById('slot-outer');
+  const shaker = document.getElementById('slot-shaker');
 
-  // ── 슬롯 RAF 애니메이션 ──────────────────────────────────
-  let lastTs = null;
-  let slotX  = 0;
-
-  function initSlot() {
-    const containerW = outer.offsetWidth || window.innerWidth;
-    // 컨테이너 중앙에 카드 하나 정렬
-    slotX = containerW / 2 - CARD_W / 2;
-    track.style.transform = `translateX(${slotX}px)`;
-  }
-
-  function spinTick(ts) {
-    if (!lastTs) lastTs = ts;
-    const dt = Math.min((ts - lastTs) / 1000, 0.05);
-    lastTs = ts;
-
-    slotX -= 340 * dt;
-
-    // 루프: POOL_SIZE 장 단위로 리셋
-    const loopWidth = POOL_SIZE * CARD_SLOT;
-    const containerW = outer.offsetWidth || window.innerWidth;
-    const resetThreshold = containerW / 2 - CARD_W / 2 - loopWidth;
-    if (slotX < resetThreshold) slotX += loopWidth;
-
-    track.style.transform = `translateX(${slotX}px)`;
-    _raf = requestAnimationFrame(spinTick);
-  }
-
-  // 첫 번째 requestAnimationFrame 에서 offsetWidth가 준비됨
-  requestAnimationFrame(() => {
-    initSlot();
-    _raf = requestAnimationFrame(spinTick);
-  });
+  // 첫 방문 시 슬롯 시작 (offsetWidth 확보 후)
+  requestAnimationFrame(() => _startSpin());
 
   // ── 탭: 슬롯 잠금 ────────────────────────────────────────
-  outer.addEventListener('click', () => {
+  _outer.addEventListener('click', () => {
     if (_locked) return;
     _locked = true;
 
     cancelAnimationFrame(_raf);
     _raf = null;
-    lastTs = null;
+    _lastTs = null;
 
     // 탭 시점에 pendingBolt 읽기 (init 시점엔 아직 null)
     const p = getPendingBolt();
