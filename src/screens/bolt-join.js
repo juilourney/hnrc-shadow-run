@@ -1,5 +1,6 @@
 import { goToScreen } from '../utils/nav.js';
 import { cancelJoin } from './bolt.js';
+import { getJoinedBoltId, getBolts } from '../store.js';
 
 export function render() {
   return `
@@ -71,7 +72,9 @@ export function render() {
   </div>
 
   <!-- 진행 중 뷰 (시작 후 교체) -->
-  <div id="bolt-join-running" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:0 32px; text-align:center;">
+  <div id="bolt-join-running" style="display:none; position:relative; isolation:isolate; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:0 32px; text-align:center;">
+    <!-- 단일팀 팀 컬러 글로우 (단일팀일 때만 표시) -->
+    <div id="join-team-glow" class="team-glow" style="display:none;"></div>
     <div style="width:72px; height:72px; border-radius:22px; background:rgba(251,146,60,.15); border:1px solid rgba(251,146,60,.3); display:flex; align-items:center; justify-content:center; font-size:32px;">⚡</div>
 
     <!-- 단일팀 시작 알림 (단일팀일 때만 노출) -->
@@ -124,6 +127,12 @@ export function init() {
     document.getElementById('bolt-join-waiting').style.display = 'none';
     document.getElementById('bolt-join-running').style.display = 'flex';
     document.getElementById('bolt-join-start-area').style.display = 'none';
+
+    // 단일팀(같은 팀원끼리 모임)이면 팀 컬러 글로우 + 알림 표시
+    const bolt = getBolts().find(b => b.id === getJoinedBoltId());
+    const single = !!bolt?.isSingleTeam;
+    document.getElementById('single-team-start-notice').style.display = single ? 'block' : 'none';
+    document.getElementById('join-team-glow').style.display           = single ? 'block' : 'none';
   });
 
   document.getElementById('join-result-btn').addEventListener('click', () => {

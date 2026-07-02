@@ -128,7 +128,9 @@ export function render() {
   </div>
 
   <!-- 진행 중 뷰 -->
-  <div id="bolt-progress-view" style="display:none; flex:1; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:0 32px; text-align:center;">
+  <div id="bolt-progress-view" style="display:none; position:relative; isolation:isolate; flex:1; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:0 32px; text-align:center;">
+    <!-- 단일팀 팀 컬러 글로우 (단일팀일 때만 표시) -->
+    <div id="progress-team-glow" class="team-glow" style="display:none;"></div>
     <div style="width:64px; height:64px; border-radius:20px; background:var(--accent-tint); display:flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:4px;">⚡</div>
     <p style="font-size:18px; font-weight:700; color:var(--accent);">번개 진행 중</p>
     <p style="font-size:13px; color:#52525b; line-height:1.7;">한강 새벽 LSD · 반포 잠수교<br/>방장이 완료 처리하면 결과가 공개됩니다</p>
@@ -381,8 +383,12 @@ function showToast(msg) {
   setTimeout(() => toast.remove(), 2500);
 }
 
-export function showProgressView() {
+export function showProgressView(boltId = getJoinedBoltId()) {
   document.getElementById('bolt-list-view').style.display = 'none';
   const pv = document.getElementById('bolt-progress-view');
   pv.style.display = 'flex';
+
+  // 단일팀(같은 팀원끼리 모임)이면 팀 컬러 글로우 표시
+  const bolt = getBolts().find(b => b.id === boltId);
+  document.getElementById('progress-team-glow').style.display = bolt?.isSingleTeam ? 'block' : 'none';
 }
